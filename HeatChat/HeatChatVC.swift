@@ -36,6 +36,7 @@ class HeatChatVC: UIViewController, UITextViewDelegate{
             self.createChatMessage(data: data)
         }
         yHeight = self.navigationController!.navigationBar.frame.height * 1.005
+        self.chatBox.delegate = self
         loadUI()
     }
 
@@ -112,6 +113,14 @@ class HeatChatVC: UIViewController, UITextViewDelegate{
 //        }catch{
 //            print(error)
 //        }
+    }
+    
+    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+        if (text == "\n") {
+            textView.resignFirstResponder()
+            return false
+        }
+        return true
     }
     
 
