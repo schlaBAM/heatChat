@@ -4,14 +4,14 @@
         <attribute name="lat" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="lon" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="text" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="time" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="time" optional="YES" attributeType="Integer 64" defaultValueString="0.0" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="uid" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
     <entity name="User" representedClassName="User" syncable="YES" codeGenerationType="class">
         <attribute name="uid" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
     <elements>
+        <element name="Message" positionX="-405" positionY="-180" width="128" height="120"/>
         <element name="User" positionX="106" positionY="-15" width="128" height="58"/>
-        <element name="Message" positionX="-405" positionY="-180" width="128" height="118"/>
     </elements>
 </model>

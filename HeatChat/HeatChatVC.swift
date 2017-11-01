@@ -66,13 +66,15 @@ class HeatChatVC: UIViewController, UITextViewDelegate{
             chatMessage.uid = data["uid"] as! String
             chatMessage.lat = data["lat"] as! Double
             chatMessage.lon = data["lon"] as! Double
-            chatMessage.time = data["time"] as! Double
+            chatMessage.time = data["time"] as! Int64
             
             self.messages.append(chatMessage)
             
             //message from other user
             var textLabel = UITextView(frame: CGRect(x: self.view.bounds.width * 0.05, y: self.yHeight, width: self.view.bounds.width * 0.45, height: self.view.bounds.height * 0.125))
             textLabel.backgroundColor = UIColor(red: 0.6078, green: 1, blue: 0.7373, alpha: 1.0) /* #9bffbc */
+            textLabel.text = chatMessage.text
+            textLabel.sizeToFit()
 
 //                UIColor(red: 0, green: 0.9176, blue: 0.5176, alpha: 1.0) /* #00ea84 */
 
@@ -80,14 +82,15 @@ class HeatChatVC: UIViewController, UITextViewDelegate{
                 textLabel = UITextView(frame: CGRect(x: self.view.bounds.width * 0.5, y: self.yHeight, width: self.view.bounds.width * 0.45, height: self.view.bounds.height * 0.125))
                 textLabel.textAlignment = .right
                 textLabel.backgroundColor = UIColor(red: 0.298, green: 0.8706, blue: 1, alpha: 1.0) /* #4cdeff */
+                textLabel.text = chatMessage.text
+                textLabel.sizeToFit()
+                textLabel.center.x = self.view.bounds.width*0.95 - textLabel.bounds.width * 0.5
             }
             
-            textLabel.text = chatMessage.text
             textLabel.layer.cornerRadius = 10
             textLabel.layer.borderColor = UIColor.black.cgColor
             textLabel.layer.borderWidth = 1
             textLabel.isUserInteractionEnabled = false
-            textLabel.sizeToFit()
             self.messageView.addSubview(textLabel)
             
             self.messageViews.append(textLabel)
@@ -114,9 +117,10 @@ class HeatChatVC: UIViewController, UITextViewDelegate{
 
     @IBAction func sendTapped(_ sender: Any) {
         print("tapped bitch")
-        let message = ["lat" : defaults.double(forKey: "userLat"), "lon" : defaults.double(forKey: "userLon"), "text" : chatBox.text, "time" : NSDate().timeIntervalSince1970, "uid" : defaults.string(forKey: "userID")] as [String : Any]
-
-        Database.database().reference().child("messages").setValue(message)
+        let message = ["lat" : defaults.double(forKey: "userLat"), "lon" : defaults.double(forKey: "userLon"), "text" : chatBox.text, "time" : Int64(NSDate().timeIntervalSince1970), "uid" : defaults.string(forKey: "userID")!] as [String : Any]
+        print(Auth.auth().currentUser?.uid)
+        print("message: \(message)")
+        Database.database().reference().child("messages").childByAutoId().setValue(message)
         
         chatBox.text = "Add a message.."
     }
