@@ -11,7 +11,7 @@ import FirebaseAuth
 import FirebaseDatabase
 
 @IBDesignable
-class HeatChatVC: UIViewController{
+class HeatChatVC: UIViewController, UITextViewDelegate{
 
     @IBOutlet weak var messageView: UIScrollView!
     
@@ -21,22 +21,17 @@ class HeatChatVC: UIViewController{
     @IBOutlet weak var sendButton: UIButton!
     @IBOutlet weak var chatBox: UITextView!
     var yHeight: CGFloat = 0.0
+    let defaults = UserDefaults.standard
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        Auth.auth().signInAnonymously { (user, error) in
-            if error != nil {
-                print("Sign in error: " + (error?.localizedDescription)!)
-            } else {
-                let anon = User(context: (self.appDel.persistentContainer.viewContext))
-                anon.uid = user?.uid
-                print(user?.uid)
-                self.appDel.saveContext()
-            }
-        }
+//        Database.database().reference().child("messages").observe(DataEventType.childAdded) { (data) in
+//            guard let data = data.value as? [String : Any] else {return}
+//            self.createChatMessage(data: data)
+//        }
         
-        Database.database().reference().child("messages").observe(DataEventType.childAdded) { (data) in
+        Database.database().reference().child("messages").queryOrdered(byChild: "time").queryLimited(toLast: 100).observe(DataEventType.childAdded) { (data) in
             guard let data = data.value as? [String : Any] else {return}
             self.createChatMessage(data: data)
         }
@@ -67,25 +62,37 @@ class HeatChatVC: UIViewController{
             let context = self.appDel.persistentContainer.viewContext
             let chatMessage = Message(context: context)
     
-        chatMessage.text = data["text"] as! String
-        chatMessage.uid = data["uid"] as! String
-        chatMessage.lat = data["lat"] as! Double
-        chatMessage.lon = data["lon"] as! Double
-        chatMessage.time = data["time"] as! Double
-        
-        self.messages.append(chatMessage)
-        
-        let textLabel = UITextView(frame: CGRect(x: view.bounds.width * 0.05, y: yHeight, width: view.bounds.width * 0.45, height: view.bounds.height * 0.125))
-        textLabel.text = chatMessage.text
-        textLabel.layer.cornerRadius = 10
-        textLabel.layer.borderColor = UIColor.black.cgColor
-        textLabel.layer.borderWidth = 1
-        textLabel.sizeToFit()
-        messageView.addSubview(textLabel)
-        
-        self.messageViews.append(textLabel)
-        
-        yHeight += textLabel.bounds.height * 1.2
+            chatMessage.text = (data["text"] as! String).trimmingCharacters(in: .newlines)
+            chatMessage.uid = data["uid"] as! String
+            chatMessage.lat = data["lat"] as! Double
+            chatMessage.lon = data["lon"] as! Double
+            chatMessage.time = data["time"] as! Double
+            
+            self.messages.append(chatMessage)
+            
+            //message from other user
+            var textLabel = UITextView(frame: CGRect(x: self.view.bounds.width * 0.05, y: self.yHeight, width: self.view.bounds.width * 0.45, height: self.view.bounds.height * 0.125))
+            textLabel.backgroundColor = UIColor(red: 0.6078, green: 1, blue: 0.7373, alpha: 1.0) /* #9bffbc */
+
+//                UIColor(red: 0, green: 0.9176, blue: 0.5176, alpha: 1.0) /* #00ea84 */
+
+            if self.defaults.string(forKey: "userID") == chatMessage.uid {
+                textLabel = UITextView(frame: CGRect(x: self.view.bounds.width * 0.5, y: self.yHeight, width: self.view.bounds.width * 0.45, height: self.view.bounds.height * 0.125))
+                textLabel.textAlignment = .right
+                textLabel.backgroundColor = UIColor(red: 0.298, green: 0.8706, blue: 1, alpha: 1.0) /* #4cdeff */
+            }
+            
+            textLabel.text = chatMessage.text
+            textLabel.layer.cornerRadius = 10
+            textLabel.layer.borderColor = UIColor.black.cgColor
+            textLabel.layer.borderWidth = 1
+            textLabel.isUserInteractionEnabled = false
+            textLabel.sizeToFit()
+            self.messageView.addSubview(textLabel)
+            
+            self.messageViews.append(textLabel)
+            
+            self.yHeight += textLabel.bounds.height * 1.2
         
             self.messageView.contentSize.height = self.yHeight
 
@@ -95,7 +102,6 @@ class HeatChatVC: UIViewController{
     }
     
     func loadMessages(){
-        
         
         
 //        do{
@@ -108,18 +114,17 @@ class HeatChatVC: UIViewController{
 
     @IBAction func sendTapped(_ sender: Any) {
         print("tapped bitch")
+        let message = ["lat" : defaults.double(forKey: "userLat"), "lon" : defaults.double(forKey: "userLon"), "text" : chatBox.text, "time" : NSDate().timeIntervalSince1970, "uid" : defaults.string(forKey: "userID")] as [String : Any]
+
+        Database.database().reference().child("messages").setValue(message)
+        
         chatBox.text = "Add a message.."
     }
     
     /*
      
-     //navController because obviously
-     //scrollview for chat (height = ( navBarHeight - chatBarHeight ))
      //create a messageview for the chat bubble, and how long ago it was sent underneath (could pull out like unite)
      // -> user disabled textview for the bubble?
- 
- 
      */
-
 }
 

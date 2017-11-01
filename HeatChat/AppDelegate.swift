@@ -9,15 +9,21 @@
 import UIKit
 import CoreData
 import Firebase
+import FirebaseAuth
+import CoreLocation
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate {
 
     var window: UIWindow?
+    let defaults = UserDefaults.standard
+    var locationManager : CLLocationManager!
+
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         FirebaseApp.configure()
+        authenticateUser()
         return true
     }
 
@@ -43,6 +49,50 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
         // Saves changes in the application's managed object context before the application terminates.
         self.saveContext()
+    }
+    
+    func authenticateUser(){
+        Auth.auth().signInAnonymously { (user, error) in
+            if error != nil {
+                print("Sign in error: " + (error?.localizedDescription)!)
+            } else {
+                //                let anon = User(context: (self.appDel.persistentContainer.viewContext))
+                self.defaults.set(user?.uid, forKey: "userID")
+                print(user?.uid)
+                self.checkLocation()
+                //                self.appDel.saveContext()
+            }
+        }
+    }
+    
+    func checkLocation() {
+        locationManager = CLLocationManager()
+        locationManager.desiredAccuracy = kCLLocationAccuracyBest
+        locationManager.delegate = self
+        
+        switch(CLLocationManager.authorizationStatus()) {
+            case .denied, .notDetermined, .restricted:
+                locationManager.requestWhenInUseAuthorization()
+            case .authorizedWhenInUse, .authorizedAlways:
+                locationManager.startUpdatingLocation()
+        }
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        if let coordinates = manager.location?.coordinate {
+            print("new auth coords: \(coordinates.latitude),\(coordinates.longitude)")
+            defaults.set(coordinates.latitude, forKey: "userLat")
+            defaults.set(coordinates.longitude, forKey: "userLon")
+        }
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        
+        if let coordinates = manager.location?.coordinate {
+            print("coords: \(coordinates.latitude),\(coordinates.longitude)")
+            defaults.set(coordinates.latitude, forKey: "userLat")
+            defaults.set(coordinates.longitude, forKey: "userLon")
+        }
     }
 
     // MARK: - Core Data stack
