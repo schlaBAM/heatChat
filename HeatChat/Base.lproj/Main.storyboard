@@ -1,24 +1,108 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13122.16" systemVersion="17A277" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13196" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="yjL-O8-b41">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13104.12"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13174"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
+    <customFonts key="customFonts">
+        <array key="PingFang.ttc">
+            <string>PingFangHK-Medium</string>
+        </array>
+    </customFonts>
     <scenes>
-        <!--View Controller-->
+        <!--Heatchat-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="ViewController" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="BYZ-38-t0r" customClass="HeatChatVC" customModule="HeatChat" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="PXQ-CK-RIK">
+                                <rect key="frame" x="0.0" y="64" width="375" height="603"/>
+                                <subviews>
+                                    <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" alwaysBounceHorizontal="YES" showsHorizontalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="AC0-gj-Tnr">
+                                        <rect key="frame" x="0.0" y="0.0" width="375" height="536"/>
+                                    </scrollView>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="RzS-7K-f09">
+                                        <rect key="frame" x="0.0" y="536" width="375" height="67"/>
+                                        <subviews>
+                                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" misplaced="YES" text="Add a message.." textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="Ir7-ls-MNQ">
+                                                <rect key="frame" x="8" y="6" width="300" height="53"/>
+                                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences" returnKeyType="send"/>
+                                            </textView>
+                                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2f1-Z2-z5T">
+                                                <rect key="frame" x="316" y="8" width="51" height="51"/>
+                                                <color key="backgroundColor" red="0.62293836805555558" green="0.94305889477777782" blue="0.70974392361111116" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                <fontDescription key="fontDescription" name="PingFangHK-Medium" family="PingFang HK" pointSize="15"/>
+                                                <state key="normal" title="Send"/>
+                                                <connections>
+                                                    <action selector="sendTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="OP9-2c-Fgh"/>
+                                                </connections>
+                                            </button>
+                                        </subviews>
+                                        <color key="backgroundColor" white="0.95054796006944442" alpha="1" colorSpace="calibratedWhite"/>
+                                        <constraints>
+                                            <constraint firstItem="Ir7-ls-MNQ" firstAttribute="leading" secondItem="RzS-7K-f09" secondAttribute="leadingMargin" id="Ecu-o3-uKU"/>
+                                            <constraint firstItem="2f1-Z2-z5T" firstAttribute="bottom" secondItem="RzS-7K-f09" secondAttribute="bottomMargin" id="Esf-Tm-lVc"/>
+                                            <constraint firstItem="2f1-Z2-z5T" firstAttribute="leading" secondItem="Ir7-ls-MNQ" secondAttribute="trailing" constant="8" id="HlZ-4G-pEp"/>
+                                            <constraint firstItem="2f1-Z2-z5T" firstAttribute="top" secondItem="RzS-7K-f09" secondAttribute="topMargin" id="LRw-Yr-HtN"/>
+                                            <constraint firstItem="2f1-Z2-z5T" firstAttribute="trailing" secondItem="RzS-7K-f09" secondAttribute="trailingMargin" id="YMN-6Y-K5n"/>
+                                            <constraint firstItem="2f1-Z2-z5T" firstAttribute="bottom" secondItem="Ir7-ls-MNQ" secondAttribute="bottom" id="YQ0-NT-yEG"/>
+                                            <constraint firstItem="Ir7-ls-MNQ" firstAttribute="top" secondItem="RzS-7K-f09" secondAttribute="top" constant="6" id="kdY-5E-Z86"/>
+                                        </constraints>
+                                    </view>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstAttribute="bottom" secondItem="AC0-gj-Tnr" secondAttribute="bottom" constant="67" id="ClX-Jv-SIt"/>
+                                </constraints>
+                            </stackView>
+                        </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="PXQ-CK-RIK" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="008-MX-Gui"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="PXQ-CK-RIK" secondAttribute="bottom" id="3e8-z0-xJJ"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="PXQ-CK-RIK" secondAttribute="trailing" id="Tbc-MS-jyC"/>
+                            <constraint firstItem="PXQ-CK-RIK" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="iik-Gk-czB"/>
+                        </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
+                    <navigationItem key="navigationItem" title="Heatchat" id="soO-HQ-eCU"/>
+                    <connections>
+                        <outlet property="chatBox" destination="Ir7-ls-MNQ" id="nUx-hh-Mdp"/>
+                        <outlet property="messageView" destination="AC0-gj-Tnr" id="QHW-x7-lnl"/>
+                        <outlet property="sendButton" destination="2f1-Z2-z5T" id="hrW-cO-bsj"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
+            <point key="canvasLocation" x="372" y="33.733133433283363"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="bS2-Aw-9Vk">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="yjL-O8-b41" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="fZV-f8-yIH">
+                        <rect key="frame" x="0.0" y="20" width="375" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="BYZ-38-t0r" kind="relationship" relationship="rootViewController" id="dct-Yz-uKy"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="gJI-zT-Cb6" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="372" y="-706"/>
         </scene>
     </scenes>
 </document>
