@@ -28,8 +28,7 @@ class HeatChatVC: UIViewController, UITextViewDelegate{
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardIsShowing(_:)), name: Notification.Name.UIKeyboardWillShow, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardIsHiding(_:)), name: Notification.Name.UIKeyboardWillHide, object: nil)
+        setupNotifications()
 //        Database.database().reference().child("messages").observe(DataEventType.childAdded) { (data) in
 //            guard let data = data.value as? [String : Any] else {return}
 //            self.createChatMessage(data: data)
@@ -39,13 +38,14 @@ class HeatChatVC: UIViewController, UITextViewDelegate{
             guard let data = data.value as? [String : Any] else {return}
             self.createChatMessage(data: data)
         }
-        yHeight = self.navigationController!.navigationBar.frame.height * 1.005
+        yHeight = self.navigationController!.navigationBar.frame.height * 1.05
+        messageView.delegate = self
         self.chatBox.delegate = self
         loadUI()
     }
 
     override func viewWillAppear(_ animated: Bool) {
-        loadMessages()
+//        loadMessages()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -53,12 +53,14 @@ class HeatChatVC: UIViewController, UITextViewDelegate{
         NotificationCenter.default.removeObserver(self, name: Notification.Name.UIKeyboardWillHide, object: nil)
     }
     
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+    func setupNotifications(){
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardIsShowing(_:)), name: Notification.Name.UIKeyboardWillShow, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardIsHiding(_:)), name: Notification.Name.UIKeyboardWillHide, object: nil)
     }
     
     func loadUI(){
+        
+        messageView.contentSize = CGSize(width: messageView.bounds.width, height: 0)
         sendButton.layer.borderWidth = 1
         sendButton.layer.cornerRadius = 5
         chatBox.layer.cornerRadius = 10
@@ -80,19 +82,21 @@ class HeatChatVC: UIViewController, UITextViewDelegate{
         messages.append(chatMessage)
         
         //message from other user
-        var textLabel = UITextView(frame: CGRect(x: view.bounds.width * 0.05, y: yHeight, width: view.bounds.width * 0.45, height: view.bounds.height * 0.125))
+        var textLabel = UITextView(frame: CGRect(x: view.bounds.width * 0.05, y: yHeight, width: view.bounds.width * 0.65, height: view.bounds.height * 0.125))
         textLabel.backgroundColor = UIColor(red: 0.6078, green: 1, blue: 0.7373, alpha: 1.0) /* #9bffbc */
         textLabel.text = chatMessage.text
+        textLabel.font = UIFont(name: "PingFangHK-Regular", size: 12)
         textLabel.sizeToFit()
 
 //                UIColor(red: 0, green: 0.9176, blue: 0.5176, alpha: 1.0) /* #00ea84 */
 
         if defaults.string(forKey: "userID") == chatMessage.uid {
-            textLabel = UITextView(frame: CGRect(x: view.bounds.width * 0.5, y: yHeight, width: view.bounds.width * 0.45, height: view.bounds.height * 0.125))
+            textLabel = UITextView(frame: CGRect(x: view.bounds.width * 0.5, y: yHeight, width: view.bounds.width * 0.65, height: view.bounds.height * 0.125))
             textLabel.backgroundColor = UIColor(red: 0.298, green: 0.8706, blue: 1, alpha: 1.0) /* #4cdeff */
+            textLabel.font = UIFont(name: "PingFangHK-Regular", size: 12)
             textLabel.text = chatMessage.text
             textLabel.sizeToFit()
-            textLabel.center.x = view.bounds.width*0.95 - textLabel.bounds.width * 0.5
+            textLabel.center.x = messageView.bounds.width*0.95 - textLabel.bounds.width * 0.5
         }
         
         textLabel.layer.cornerRadius = 10
@@ -105,9 +109,8 @@ class HeatChatVC: UIViewController, UITextViewDelegate{
         
         yHeight += textLabel.bounds.height * 1.2
     
-        messageView.contentSize.height = yHeight        
-        messageView.scrollRectToVisible(messageView.frame, animated: true)
-
+        messageView.contentSize.height = yHeight
+        
         messageView.scrollRectToVisible((messageViews.last?.frame)!, animated: true)
 
     }
@@ -127,8 +130,12 @@ class HeatChatVC: UIViewController, UITextViewDelegate{
         if let keyboardFrame: NSValue = notification.userInfo?[UIKeyboardFrameEndUserInfoKey] as? NSValue {
             let keyboardRect = keyboardFrame.cgRectValue
             stackView.frame.origin.y -= keyboardRect.height
-            messageView.scrollRectToVisible((messageViews.last?.frame)!, animated: true)
-        }
+            
+            var offset = messageView.contentOffset
+            offset.y = messageView.contentSize.height + messageView.contentInset.bottom - messageView.bounds.size.height
+            messageView.setContentOffset(offset, animated: true)
+            
+         }
     }
     
     @objc func keyboardIsHiding(_ notification : Notification){
@@ -153,8 +160,7 @@ class HeatChatVC: UIViewController, UITextViewDelegate{
     @IBAction func sendTapped(_ sender: Any) {
         let message = ["lat" : defaults.double(forKey: "userLat"), "lon" : defaults.double(forKey: "userLon"), "text" : chatBox.text, "time" : Int64(NSDate().timeIntervalSince1970), "uid" : defaults.string(forKey: "userID")!] as [String : Any]
         Database.database().reference().child("messages").childByAutoId().setValue(message)
-        
-        chatBox.text = "Add a message.."
+        chatBox.text.removeAll()
     }
     
     /*
