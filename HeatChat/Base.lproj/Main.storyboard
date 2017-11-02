@@ -29,6 +29,7 @@
                                 <subviews>
                                     <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" alwaysBounceHorizontal="YES" showsHorizontalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="AC0-gj-Tnr">
                                         <rect key="frame" x="0.0" y="0.0" width="320" height="455"/>
+                                        <color key="backgroundColor" red="0.92143100499999997" green="0.92145264149999995" blue="0.92144101860000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                     </scrollView>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="RzS-7K-f09">
                                         <rect key="frame" x="0.0" y="455" width="320" height="49"/>
@@ -39,9 +40,9 @@
                                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences" returnKeyType="done"/>
                                             </textView>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2f1-Z2-z5T">
-                                                <rect key="frame" x="239" y="8" width="66" height="33"/>
-                                                <color key="backgroundColor" red="0.62293836805555558" green="0.94305889477777782" blue="0.70974392361111116" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2f1-Z2-z5T">
+                                                <rect key="frame" x="239" y="6" width="66" height="35"/>
+                                                <color key="backgroundColor" red="0.60784313725490191" green="1" blue="0.70980392156862748" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" constant="66" id="LQ6-nj-gOZ"/>
                                                 </constraints>
@@ -60,7 +61,7 @@
                                             <constraint firstItem="Ir7-ls-MNQ" firstAttribute="leading" secondItem="RzS-7K-f09" secondAttribute="leadingMargin" id="fdd-eN-ePK"/>
                                             <constraint firstItem="Ir7-ls-MNQ" firstAttribute="bottom" secondItem="RzS-7K-f09" secondAttribute="bottomMargin" id="ljw-86-rFw"/>
                                             <constraint firstAttribute="trailing" secondItem="2f1-Z2-z5T" secondAttribute="trailing" constant="15" id="z0r-4g-GAa"/>
-                                            <constraint firstItem="2f1-Z2-z5T" firstAttribute="centerY" secondItem="RzS-7K-f09" secondAttribute="centerY" id="zLm-KP-QqI"/>
+                                            <constraint firstItem="2f1-Z2-z5T" firstAttribute="centerY" secondItem="RzS-7K-f09" secondAttribute="centerY" constant="-1" id="zLm-KP-QqI"/>
                                         </constraints>
                                     </view>
                                 </subviews>
@@ -79,13 +80,15 @@
                     <navigationItem key="navigationItem" title="Heatchat" id="soO-HQ-eCU"/>
                     <connections>
                         <outlet property="chatBox" destination="Ir7-ls-MNQ" id="nUx-hh-Mdp"/>
+                        <outlet property="chatView" destination="RzS-7K-f09" id="eLp-sz-8bb"/>
                         <outlet property="messageView" destination="AC0-gj-Tnr" id="QHW-x7-lnl"/>
                         <outlet property="sendButton" destination="2f1-Z2-z5T" id="hrW-cO-bsj"/>
+                        <outlet property="stackView" destination="PXQ-CK-RIK" id="eOu-bd-RmA"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="372" y="33.733133433283363"/>
+            <point key="canvasLocation" x="371.25" y="32.74647887323944"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="bS2-Aw-9Vk">
