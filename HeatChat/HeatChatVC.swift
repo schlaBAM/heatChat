@@ -28,20 +28,13 @@ class HeatChatVC: UIViewController, UITextViewDelegate{
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        loadUI()
         setupNotifications()
-//        Database.database().reference().child("messages").observe(DataEventType.childAdded) { (data) in
-//            guard let data = data.value as? [String : Any] else {return}
-//            self.createChatMessage(data: data)
-//        }
         
         Database.database().reference().child("messages").queryOrdered(byChild: "time").queryLimited(toLast: 100).observe(DataEventType.childAdded) { (data) in
             guard let data = data.value as? [String : Any] else {return}
             self.createChatMessage(data: data)
         }
-        yHeight = self.navigationController!.navigationBar.frame.height * 1.05
-        messageView.delegate = self
-        self.chatBox.delegate = self
-        loadUI()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -60,12 +53,19 @@ class HeatChatVC: UIViewController, UITextViewDelegate{
     
     func loadUI(){
         
+        yHeight = self.navigationController!.navigationBar.frame.height * 1.05
+        
+        messageView.delegate = self
         messageView.contentSize = CGSize(width: messageView.bounds.width, height: 0)
+        
         sendButton.layer.borderWidth = 1
         sendButton.layer.cornerRadius = 5
+        
+        self.chatBox.delegate = self
         chatBox.layer.cornerRadius = 10
         chatBox.layer.borderColor = UIColor.black.cgColor
         chatBox.layer.borderWidth = 1
+        
     }
     
     func createChatMessage(data : [String : Any]){
@@ -78,8 +78,21 @@ class HeatChatVC: UIViewController, UITextViewDelegate{
         chatMessage.lat = data["lat"] as! Double
         chatMessage.lon = data["lon"] as! Double
         chatMessage.time = data["time"] as! Int64
-        
         messages.append(chatMessage)
+        
+        let textLabel = createTextView(chatMessage)
+        let timeLabel = createTimeStamp(textLabel, chatMessage: chatMessage)
+        messageView.addSubview(textLabel)
+        messageView.addSubview(timeLabel)
+        messageViews.append(textLabel)
+        
+        yHeight += textLabel.bounds.height * 1.2
+        messageView.contentSize.height = yHeight
+        messageView.scrollRectToVisible((messageViews.last?.frame)!, animated: true)
+
+    }
+    
+    func createTextView(_ chatMessage : Message) -> UITextView {
         
         //message from other user
         var textLabel = UITextView(frame: CGRect(x: view.bounds.width * 0.05, y: yHeight, width: view.bounds.width * 0.65, height: view.bounds.height * 0.125))
@@ -87,9 +100,7 @@ class HeatChatVC: UIViewController, UITextViewDelegate{
         textLabel.text = chatMessage.text
         textLabel.font = UIFont(name: "PingFangHK-Regular", size: 12)
         textLabel.sizeToFit()
-
-//                UIColor(red: 0, green: 0.9176, blue: 0.5176, alpha: 1.0) /* #00ea84 */
-
+        
         if defaults.string(forKey: "userID") == chatMessage.uid {
             textLabel = UITextView(frame: CGRect(x: view.bounds.width * 0.5, y: yHeight, width: view.bounds.width * 0.65, height: view.bounds.height * 0.125))
             textLabel.backgroundColor = UIColor(red: 0.298, green: 0.8706, blue: 1, alpha: 1.0) /* #4cdeff */
@@ -103,27 +114,34 @@ class HeatChatVC: UIViewController, UITextViewDelegate{
         textLabel.layer.borderColor = UIColor.black.cgColor
         textLabel.layer.borderWidth = 1
         textLabel.isUserInteractionEnabled = false
-        messageView.addSubview(textLabel)
         
-        messageViews.append(textLabel)
-        
-        yHeight += textLabel.bounds.height * 1.2
-    
-        messageView.contentSize.height = yHeight
-        
-        messageView.scrollRectToVisible((messageViews.last?.frame)!, animated: true)
-
+        return textLabel
     }
     
-    func loadMessages(){
+    func createTimeStamp(_ textLabel: UITextView, chatMessage : Message) -> UILabel{
         
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "MMM d h:mm a"
+        let date = Date(timeIntervalSince1970: Double(chatMessage.time))
         
+        let timeLabel = UILabel(frame: CGRect(x: messageView.bounds.width * 1.02, y: yHeight, width: messageView.bounds.width * 0.2, height: messageView.bounds.height * 0.1))
+        timeLabel.text = dateFormatter.string(from: date)
+        timeLabel.font = UIFont(name: "PingFangHK-Regular", size: 10)
+        timeLabel.sizeToFit()
+        timeLabel.center.y = textLabel.center.y
+        timeLabel.textColor = .black
+        
+        return timeLabel
+    }
+    
+    //core data for later.
+//    func loadMessages(){
 //        do{
 //            messages = try appDel.persistentContainer.viewContext.fetch(Message.fetchRequest())
 //        }catch{
 //            print(error)
 //        }
-    }
+//    }
     
     @objc func keyboardIsShowing(_ notification : Notification){
         chatBox.text = ""
@@ -155,18 +173,12 @@ class HeatChatVC: UIViewController, UITextViewDelegate{
         }
         return true
     }
-    
 
     @IBAction func sendTapped(_ sender: Any) {
         let message = ["lat" : defaults.double(forKey: "userLat"), "lon" : defaults.double(forKey: "userLon"), "text" : chatBox.text, "time" : Int64(NSDate().timeIntervalSince1970), "uid" : defaults.string(forKey: "userID")!] as [String : Any]
         Database.database().reference().child("messages").childByAutoId().setValue(message)
         chatBox.text.removeAll()
+        view.endEditing(true)
     }
-    
-    /*
-     
-     //create a messageview for the chat bubble, and how long ago it was sent underneath (could pull out like unite)
-     // -> user disabled textview for the bubble?
-     */
 }
 
