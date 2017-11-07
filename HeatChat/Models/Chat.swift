@@ -1,5 +1,5 @@
 //
-//  Message.swift
+//  Chat.swift
 //  HeatChat
 //
 //  Created by BAM on 2017-10-30.

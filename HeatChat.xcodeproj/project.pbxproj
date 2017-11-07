@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		2D676602767C42024F3EB5E5 /* Pods_HeatChatUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DAD8DA1C7DE2ACDDF40E1AA7 /* Pods_HeatChatUITests.framework */; };
 		42BD6F3926C072C67B9F1A9B /* Pods_HeatChatTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACD4809BB410A079765D8D5C /* Pods_HeatChatTests.framework */; };
-		A92A24D71FA83C7C00400912 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = A92A24D61FA83C7C00400912 /* User.swift */; };
+		A92A24D71FA83C7C00400912 /* Chat.swift in Sources */ = {isa = PBXBuildFile; fileRef = A92A24D61FA83C7C00400912 /* Chat.swift */; };
 		A9391F231FA8188D00D5DAF0 /* ChatBoxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9391F221FA8188D00D5DAF0 /* ChatBoxView.swift */; };
 		A962F3ED1FA802C40097935A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A962F3EC1FA802C40097935A /* AppDelegate.swift */; };
 		A962F3EF1FA802C40097935A /* HeatChatVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A962F3EE1FA802C40097935A /* HeatChatVC.swift */; };
@@ -20,6 +20,7 @@
 		A962F4051FA802C40097935A /* HeatChatTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A962F4041FA802C40097935A /* HeatChatTests.swift */; };
 		A962F4101FA802C40097935A /* HeatChatUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A962F40F1FA802C40097935A /* HeatChatUITests.swift */; };
 		A962F4201FA806520097935A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A962F41F1FA806410097935A /* GoogleService-Info.plist */; };
+		A9B52C121FB1845A006A4B33 /* School.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9B52C111FB1845A006A4B33 /* School.swift */; };
 		F266FEDEC37EC976388E776F /* Pods_HeatChat.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A6567089AECF0424FB43F87 /* Pods_HeatChat.framework */; };
 /* End PBXBuildFile section */
 
@@ -46,7 +47,7 @@
 		79EED0ADE3807AEACD7A3A26 /* Pods-HeatChatTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HeatChatTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-HeatChatTests/Pods-HeatChatTests.release.xcconfig"; sourceTree = "<group>"; };
 		86962BA6F04C2F4062B83221 /* Pods-HeatChatUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HeatChatUITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-HeatChatUITests/Pods-HeatChatUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		8D16D49F189B9B8C38343AA6 /* Pods-HeatChatUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HeatChatUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-HeatChatUITests/Pods-HeatChatUITests.release.xcconfig"; sourceTree = "<group>"; };
-		A92A24D61FA83C7C00400912 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		A92A24D61FA83C7C00400912 /* Chat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chat.swift; sourceTree = "<group>"; };
 		A9391F221FA8188D00D5DAF0 /* ChatBoxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatBoxView.swift; sourceTree = "<group>"; };
 		A962F3E91FA802C40097935A /* HeatChat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HeatChat.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A962F3EC1FA802C40097935A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -63,6 +64,8 @@
 		A962F40F1FA802C40097935A /* HeatChatUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeatChatUITests.swift; sourceTree = "<group>"; };
 		A962F4111FA802C40097935A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A962F41F1FA806410097935A /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		A9B52C111FB1845A006A4B33 /* School.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = School.swift; sourceTree = "<group>"; };
+		A9BA5DC31FABFF0400D07310 /* HeatChat.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = HeatChat.entitlements; sourceTree = "<group>"; };
 		ACD4809BB410A079765D8D5C /* Pods_HeatChatTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_HeatChatTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CE28DF66FD250F9D3F04E9B1 /* Pods-HeatChat.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HeatChat.release.xcconfig"; path = "Pods/Target Support Files/Pods-HeatChat/Pods-HeatChat.release.xcconfig"; sourceTree = "<group>"; };
 		D14FB28D3DA27115C3517BDB /* Pods-HeatChatTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HeatChatTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-HeatChatTests/Pods-HeatChatTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -110,7 +113,8 @@
 		A92A24D51FA83C7000400912 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				A92A24D61FA83C7C00400912 /* User.swift */,
+				A92A24D61FA83C7C00400912 /* Chat.swift */,
+				A9B52C111FB1845A006A4B33 /* School.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -148,6 +152,7 @@
 		A962F3EB1FA802C40097935A /* HeatChat */ = {
 			isa = PBXGroup;
 			children = (
+				A9BA5DC31FABFF0400D07310 /* HeatChat.entitlements */,
 				A92A24D51FA83C7000400912 /* Models */,
 				A9391F211FA8186500D5DAF0 /* Views */,
 				A962F3EC1FA802C40097935A /* AppDelegate.swift */,
@@ -206,6 +211,7 @@
 				A962F3E71FA802C40097935A /* Resources */,
 				C73ACB7FBE0C4457466C0390 /* [CP] Embed Pods Frameworks */,
 				F1163E767544FC55840F0209 /* [CP] Copy Pods Resources */,
+				A9F3FC461FAE74F2008A5C47 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -271,6 +277,11 @@
 					A962F3E81FA802C40097935A = {
 						CreatedOnToolsVersion = 9.0.1;
 						ProvisioningStyle = Automatic;
+						SystemCapabilities = {
+							com.apple.Push = {
+								enabled = 1;
+							};
+						};
 					};
 					A962F3FF1FA802C40097935A = {
 						CreatedOnToolsVersion = 9.0.1;
@@ -414,6 +425,19 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
+		A9F3FC461FAE74F2008A5C47 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Fabric/run\"\n";
+		};
 		C48496DA7CA7B44BA46B102D /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -494,8 +518,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				A9391F231FA8188D00D5DAF0 /* ChatBoxView.swift in Sources */,
+				A9B52C121FB1845A006A4B33 /* School.swift in Sources */,
 				A962F3EF1FA802C40097935A /* HeatChatVC.swift in Sources */,
-				A92A24D71FA83C7C00400912 /* User.swift in Sources */,
+				A92A24D71FA83C7C00400912 /* Chat.swift in Sources */,
 				A962F3ED1FA802C40097935A /* AppDelegate.swift in Sources */,
 				A962F3F51FA802C40097935A /* HeatChat.xcdatamodeld in Sources */,
 			);
@@ -664,7 +689,9 @@
 			baseConfigurationReference = 0D6A3E3882F7B02BD4492137 /* Pods-HeatChat.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = HeatChat/HeatChat.entitlements;
 				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 42279ALPRK;
 				INFOPLIST_FILE = HeatChat/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
@@ -672,7 +699,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.bam.HeatChat;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -681,6 +708,7 @@
 			baseConfigurationReference = CE28DF66FD250F9D3F04E9B1 /* Pods-HeatChat.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = HeatChat/HeatChat.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 42279ALPRK;
 				INFOPLIST_FILE = HeatChat/Info.plist;
@@ -689,7 +717,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.bam.HeatChat;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
