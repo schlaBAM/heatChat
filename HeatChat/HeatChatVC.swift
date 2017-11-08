@@ -29,11 +29,9 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        createSideBar(){
-            loadUI()
-            setupNotifications()
-        }
+    
+        loadUI()
+        setupNotifications()
         
         Database.database().reference().child("messages").queryOrdered(byChild: "time").queryLimited(toLast: 100).observe(DataEventType.childAdded) { (data) in
             guard let data = data.value as? [String : Any] else {return}
@@ -58,17 +56,23 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
     }
     
     func loadUI(){
-        
+      
+        getSchools()
+            
         let navHeight = self.navigationController!.navigationBar.frame.height
 
         yHeight = navHeight * 1.05
         
-        sideBar = UITableView(frame: CGRect(x: 0, y: navHeight, width: view.bounds.width * 0.4, height: view.bounds.height - (navHeight + chatView.frame.height)))
+        sideBar = UITableView(frame: CGRect(x: 0 - view.bounds.width * 0.5, y: navHeight, width: view.bounds.width * 0.5, height: view.frame.height - (navHeight + chatView.frame.height)))
         sideBar.delegate = self
         sideBar.dataSource = self
         sideBar.isHidden = false
+        sideBar.layer.borderWidth = 2
+        sideBar.layer.borderColor = UIColor.black.cgColor
+        sideBar.layer.cornerRadius = 5
         sideBar.reloadData()
         view.addSubview(sideBar)
+        animateSideBar(sideBar)
         
         messageView.delegate = self
         messageView.contentSize = CGSize(width: messageView.bounds.width, height: 0)
@@ -83,29 +87,37 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
         
     }
     
-    func createSideBar(closure: () -> Void){
+    @IBAction func universityIconTapped(_ sender: Any) {
+        animateSideBar(sideBar)
+    }
+    
+    func animateSideBar(_ sidebar: UIView){
         
-        getSchools(){
-            let navHeight = self.navigationController!.navigationBar.frame.height
-            sideBar = UITableView(frame: CGRect(x: 0, y: navHeight, width: view.bounds.width * 0.4, height: view.bounds.height - (navHeight + chatView.frame.height)))
-            sideBar.delegate = self
-            sideBar.dataSource = self
-            sideBar.isHidden = false
-            sideBar.reloadData()
-            view.addSubview(sideBar)
+        if sidebar.center.x < 0 {
+            UIView.animate(withDuration: 0.3, delay: 0, options: UIViewAnimationOptions.curveEaseInOut, animations: {
+                sidebar.center.x += self.view.bounds.width * 0.5
+            })
+        } else {
+            UIView.animate(withDuration: 0.3, delay: 0, options: UIViewAnimationOptions.curveEaseInOut, animations: {
+                sidebar.center.x -= self.view.bounds.width * 0.5
+            })
         }
     }
     
-    func getSchools(closure: () -> Void){
-        Database.database().reference().child("schools").observeSingleEvent(of: .childAdded) { (data) in
-            guard let data = data.value as? [String:Any] else {return}
-            self.addSchool(data)
-        }
+    func getSchools(){
+        Database.database().reference().child("schools").observeSingleEvent(of: .value, with: { (data) in
+            for item in data.children{
+                let snap = item as! DataSnapshot
+                self.addSchool((snap.value as? [String:Any])!)
+            }
+        })
     }
     
     func addSchool(_ data : [String : Any]){
+        
         let school = School(dict: data)
         schools.append(school!)
+        sideBar.reloadData()
     }
     
     func createChatMessage(data : [String : Any]){
@@ -227,6 +239,9 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         //clear messageView, load new messages
+        tableView.deselectRow(at: indexPath, animated: true)
+        print(schools[indexPath.row].lat)
+        animateSideBar(sideBar)
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

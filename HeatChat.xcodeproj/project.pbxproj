@@ -21,6 +21,7 @@
 		A962F4101FA802C40097935A /* HeatChatUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A962F40F1FA802C40097935A /* HeatChatUITests.swift */; };
 		A962F4201FA806520097935A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A962F41F1FA806410097935A /* GoogleService-Info.plist */; };
 		A9B52C121FB1845A006A4B33 /* School.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9B52C111FB1845A006A4B33 /* School.swift */; };
+		A9B52C141FB1BAE5006A4B33 /* SideBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9B52C131FB1BAE5006A4B33 /* SideBarView.swift */; };
 		F266FEDEC37EC976388E776F /* Pods_HeatChat.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A6567089AECF0424FB43F87 /* Pods_HeatChat.framework */; };
 /* End PBXBuildFile section */
 
@@ -65,6 +66,7 @@
 		A962F4111FA802C40097935A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A962F41F1FA806410097935A /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		A9B52C111FB1845A006A4B33 /* School.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = School.swift; sourceTree = "<group>"; };
+		A9B52C131FB1BAE5006A4B33 /* SideBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideBarView.swift; sourceTree = "<group>"; };
 		A9BA5DC31FABFF0400D07310 /* HeatChat.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = HeatChat.entitlements; sourceTree = "<group>"; };
 		ACD4809BB410A079765D8D5C /* Pods_HeatChatTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_HeatChatTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CE28DF66FD250F9D3F04E9B1 /* Pods-HeatChat.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HeatChat.release.xcconfig"; path = "Pods/Target Support Files/Pods-HeatChat/Pods-HeatChat.release.xcconfig"; sourceTree = "<group>"; };
@@ -123,6 +125,7 @@
 			isa = PBXGroup;
 			children = (
 				A9391F221FA8188D00D5DAF0 /* ChatBoxView.swift */,
+				A9B52C131FB1BAE5006A4B33 /* SideBarView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -522,6 +525,7 @@
 				A962F3EF1FA802C40097935A /* HeatChatVC.swift in Sources */,
 				A92A24D71FA83C7C00400912 /* Chat.swift in Sources */,
 				A962F3ED1FA802C40097935A /* AppDelegate.swift in Sources */,
+				A9B52C141FB1BAE5006A4B33 /* SideBarView.swift in Sources */,
 				A962F3F51FA802C40097935A /* HeatChat.xcdatamodeld in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

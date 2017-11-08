@@ -77,7 +77,14 @@
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
-                    <navigationItem key="navigationItem" title="Heatchat" id="soO-HQ-eCU"/>
+                    <navigationItem key="navigationItem" title="Heatchat" id="soO-HQ-eCU">
+                        <barButtonItem key="leftBarButtonItem" image="ic_location_city_36pt" id="7bG-cr-Npm">
+                            <color key="tintColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <connections>
+                                <action selector="universityIconTapped:" destination="BYZ-38-t0r" id="duj-AO-9oA"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
                         <outlet property="chatBox" destination="Ir7-ls-MNQ" id="nUx-hh-Mdp"/>
                         <outlet property="chatView" destination="RzS-7K-f09" id="eLp-sz-8bb"/>
@@ -109,4 +116,7 @@
             <point key="canvasLocation" x="372" y="-706"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="ic_location_city_36pt" width="36" height="36"/>
+    </resources>
 </document>
