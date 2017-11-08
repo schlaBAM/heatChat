@@ -26,6 +26,7 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
     var yHeight: CGFloat = 0.0
     let defaults = UserDefaults.standard
     var sideBar = UITableView()
+    var selectedUni : String?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -33,10 +34,6 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
         loadUI()
         setupNotifications()
         
-        Database.database().reference().child("messages").queryOrdered(byChild: "time").queryLimited(toLast: 100).observe(DataEventType.childAdded) { (data) in
-            guard let data = data.value as? [String : Any] else {return}
-            self.createChatMessage(data: data)
-        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -63,13 +60,14 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
 
         yHeight = navHeight * 1.05
         
-        sideBar = UITableView(frame: CGRect(x: 0 - view.bounds.width * 0.5, y: navHeight, width: view.bounds.width * 0.5, height: view.frame.height - (navHeight + chatView.frame.height)))
+        sideBar = UITableView(frame: CGRect(x: 0 - view.bounds.width * 0.5, y: navHeight, width: view.bounds.width * 0.5, height: view.bounds.height - (navHeight)))
         sideBar.delegate = self
         sideBar.dataSource = self
         sideBar.isHidden = false
         sideBar.layer.borderWidth = 2
         sideBar.layer.borderColor = UIColor.black.cgColor
         sideBar.layer.cornerRadius = 5
+        sideBar.separatorStyle = .none
         sideBar.reloadData()
         view.addSubview(sideBar)
         animateSideBar(sideBar)
@@ -202,7 +200,7 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
             stackView.frame.origin.y -= keyboardRect.height
             
             var offset = messageView.contentOffset
-            offset.y = messageView.contentSize.height + messageView.contentInset.bottom - messageView.bounds.size.height
+            offset.y = messageView.contentSize.height + messageView.contentInset.bottom - messageView.bounds.height
             messageView.setContentOffset(offset, animated: true)
             
          }
@@ -212,6 +210,11 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
         if let keyboardFrame: NSValue = notification.userInfo?[UIKeyboardFrameEndUserInfoKey] as? NSValue {
             let keyboardRect = keyboardFrame.cgRectValue
             stackView.frame.origin.y += keyboardRect.height
+            
+            var offset = messageView.contentOffset
+            offset.y = chatView.frame.height
+            messageView.setContentOffset(offset, animated: true)
+
         }
         if chatBox.text == ""{
             chatBox.text = "Add a message.."
@@ -227,10 +230,14 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
     }
 
     @IBAction func sendTapped(_ sender: Any) {
-//        let message = ["lat" : defaults.double(forKey: "userLat"), "lon" : defaults.double(forKey: "userLon"), "text" : chatBox.text, "time" : Int64(NSDate().timeIntervalSince1970), "uid" : defaults.string(forKey: "userID")!] as [String : Any]
-//        Database.database().reference().child("messages").childByAutoId().setValue(message)
-//        chatBox.text.removeAll()
-//        view.endEditing(true)
+        let message = ["lat" : defaults.double(forKey: "userLat"), "lon" : defaults.double(forKey: "userLon"), "text" : chatBox.text, "time" : Int64(NSDate().timeIntervalSince1970), "uid" : defaults.string(forKey: "userID")!] as [String : Any]
+        if let selectedUni = selectedUni {
+            if chatBox.text != "" {
+                Database.database().reference().child(selectedUni).child("messages").childByAutoId().setValue(message)
+                chatBox.text.removeAll()
+                view.endEditing(true)
+            }
+        }
     }
     
 
@@ -238,9 +245,20 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
         return "Select School"
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        //clear messageView, load new messages
+        //clear messageView, load messages, dismiss sidebar
         tableView.deselectRow(at: indexPath, animated: true)
-        print(schools[indexPath.row].lat)
+        
+        if selectedUni != schools[indexPath.row].path {
+            selectedUni = schools[indexPath.row].path 
+            messages.removeAll()
+            messageViews.removeAll()
+            messageView.subviews.forEach({$0.removeFromSuperview()})
+            
+            Database.database().reference().child(selectedUni!).child("messages").queryOrdered(byChild: "time").queryLimited(toLast: 100).observe(DataEventType.childAdded) { (data) in
+                guard let data = data.value as? [String : Any] else {return}
+                self.createChatMessage(data: data)
+            }
+        }
         animateSideBar(sideBar)
     }
     
@@ -251,6 +269,9 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = UITableViewCell()
         
+        cell.layer.cornerRadius = 5
+        cell.textLabel?.font = UIFont(name: "PingFangHK-Light", size: 14)
+//        cell.textLabel?
         cell.textLabel?.text = schools[indexPath.row].name
         
         return cell
