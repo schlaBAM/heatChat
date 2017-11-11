@@ -94,6 +94,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
             defaults.set(coordinates.latitude, forKey: "userLat")
             defaults.set(coordinates.longitude, forKey: "userLon")
         }
+        let heatChat = HeatChatVC()
+        heatChat.setupChatBar()
     }
 
     // MARK: - Core Data stack

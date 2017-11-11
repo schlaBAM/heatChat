@@ -9,9 +9,10 @@
 import UIKit
 import FirebaseAuth
 import FirebaseDatabase
+import CoreLocation
 
 @IBDesignable
-class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UITableViewDataSource{
+class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UITableViewDataSource, CLLocationManagerDelegate{
 
     @IBOutlet weak var messageView: UIScrollView!
     @IBOutlet weak var sendButton: UIButton!
@@ -26,11 +27,13 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
     var yHeight: CGFloat = 0.0
     let defaults = UserDefaults.standard
     var sideBar = UITableView()
-    var selectedUni : String?
-    
+    var selectedUni : School?
+    var locationManager = CLLocationManager()
+
+
     override func viewDidLoad() {
         super.viewDidLoad()
-    
+
         loadUI()
         setupNotifications()
         
@@ -40,6 +43,7 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
         
 //        loadMessages()
         sideBar.reloadData()
+        checkLocation()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -55,6 +59,9 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
     func loadUI(){
       
         getSchools()
+        
+        locationManager.delegate = self
+        locationManager.desiredAccuracy = kCLLocationAccuracyBest
             
         let navHeight = self.navigationController!.navigationBar.frame.height
 
@@ -80,13 +87,31 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
         
         self.chatBox.delegate = self
         chatBox.layer.cornerRadius = 10
-        chatBox.layer.borderColor = UIColor.black.cgColor
         chatBox.layer.borderWidth = 1
-        
     }
     
     @IBAction func universityIconTapped(_ sender: Any) {
         animateSideBar(sideBar)
+    }
+    
+    func setupChatBar(){
+        //if selectedUni is nil, user hasn't selected a university so this setup wouldn't be needed yet.
+        if let selectedUni = selectedUni {
+            let userLocation = CLLocation(latitude: defaults.double(forKey: "userLat"), longitude: defaults.double(forKey: "userLon"))
+            let schoolLocation = CLLocation(latitude: selectedUni.lat, longitude: selectedUni.lon)
+            let distance = userLocation.distance(from: schoolLocation) // in metres
+            
+            if distance > 30000 {
+                chatBox.layer.borderColor = UIColor.gray.cgColor
+                chatBox.isEditable = false
+                chatBox.text = "Too far away to post!"
+
+            }else{
+                chatBox.layer.borderColor = UIColor.black.cgColor
+                chatBox.isEditable = true
+                chatBox.text = "Add a message.."
+            }
+        }
     }
     
     func animateSideBar(_ sidebar: UIView){
@@ -148,14 +173,19 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
         var textLabel = UITextView(frame: CGRect(x: view.bounds.width * 0.05, y: yHeight, width: view.bounds.width * 0.65, height: view.bounds.height * 0.125))
         textLabel.backgroundColor = UIColor(red: 0.6078, green: 1, blue: 0.7373, alpha: 1.0) /* #9bffbc */
         textLabel.text = chatMessage.text
-        textLabel.font = UIFont(name: "PingFangHK-Regular", size: 12)
+        textLabel.font = UIFont(name: "PingFangHK-Regular", size: 14)
+//        textLabel.contentInset = UIEdgeInsets(top: 0, left: 5, bottom: 0, right: 5)
         textLabel.sizeToFit()
         
         if defaults.string(forKey: "userID") == chatMessage.uid {
             textLabel = UITextView(frame: CGRect(x: view.bounds.width * 0.5, y: yHeight, width: view.bounds.width * 0.65, height: view.bounds.height * 0.125))
-            textLabel.backgroundColor = UIColor(red: 0.298, green: 0.8706, blue: 1, alpha: 1.0) /* #4cdeff */
-            textLabel.font = UIFont(name: "PingFangHK-Regular", size: 12)
+            textLabel.backgroundColor = UIColor(red: 12/255, green: 64/255, blue: 117/255, alpha: 1.0) /* #0c4075 */
+//                UIColor(red: 10/255, green: 58/255, blue: 110/255, alpha: 1.0) /* #0a3a6e */
+//                UIColor(red: 0.298, green: 0.8706, blue: 1, alpha: 1.0) /* #4cdeff */
+            textLabel.font = UIFont(name: "PingFangHK-Regular", size: 14)
+            textLabel.textColor = .white
             textLabel.text = chatMessage.text
+//            textLabel.contentInset = UIEdgeInsets(top: 0, left: 5, bottom: 0, right: 5)
             textLabel.sizeToFit()
             textLabel.center.x = messageView.bounds.width*0.95 - textLabel.bounds.width * 0.5
         }
@@ -164,7 +194,6 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
         textLabel.layer.borderColor = UIColor.black.cgColor
         textLabel.layer.borderWidth = 1
         textLabel.isUserInteractionEnabled = false
-        
         return textLabel
     }
     
@@ -211,9 +240,9 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
             let keyboardRect = keyboardFrame.cgRectValue
             stackView.frame.origin.y += keyboardRect.height
             
-            var offset = messageView.contentOffset
-            offset.y = chatView.frame.height
-            messageView.setContentOffset(offset, animated: true)
+//            var offset = messageView.contentOffset
+//            offset.y -= messageView.contentSize.height + messageView.contentInset.bottom - messageView.bounds.height
+//            messageView.setContentOffset(offset, animated: true)
 
         }
         if chatBox.text == ""{
@@ -233,7 +262,7 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
         let message = ["lat" : defaults.double(forKey: "userLat"), "lon" : defaults.double(forKey: "userLon"), "text" : chatBox.text, "time" : Int64(NSDate().timeIntervalSince1970), "uid" : defaults.string(forKey: "userID")!] as [String : Any]
         if let selectedUni = selectedUni {
             if chatBox.text != "" {
-                Database.database().reference().child(selectedUni).child("messages").childByAutoId().setValue(message)
+                Database.database().reference().child(selectedUni.path).child("messages").childByAutoId().setValue(message)
                 chatBox.text.removeAll()
                 view.endEditing(true)
             }
@@ -247,17 +276,22 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         //clear messageView, load messages, dismiss sidebar
         tableView.deselectRow(at: indexPath, animated: true)
-        
-        if selectedUni != schools[indexPath.row].path {
-            selectedUni = schools[indexPath.row].path 
+    
+        if selectedUni == nil || selectedUni!.path != schools[indexPath.row].path {
+            selectedUni = schools[indexPath.row]
             messages.removeAll()
             messageViews.removeAll()
             messageView.subviews.forEach({$0.removeFromSuperview()})
             
-            Database.database().reference().child(selectedUni!).child("messages").queryOrdered(byChild: "time").queryLimited(toLast: 100).observe(DataEventType.childAdded) { (data) in
+            Database.database().reference().child(selectedUni!.path).child("messages").queryOrdered(byChild: "time").queryLimited(toLast: 100).observe(DataEventType.childAdded) { (data) in
                 guard let data = data.value as? [String : Any] else {return}
                 self.createChatMessage(data: data)
             }
+        }
+        
+        DispatchQueue.main.async {
+            self.navigationItem.title = "\(self.selectedUni!.name) Heatchat"
+            self.setupChatBar()
         }
         animateSideBar(sideBar)
     }
@@ -275,6 +309,34 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
         cell.textLabel?.text = schools[indexPath.row].name
         
         return cell
+    }
+    
+    func checkLocation() {
+        
+        switch(CLLocationManager.authorizationStatus()) {
+        case .denied, .notDetermined, .restricted:
+            locationManager.requestWhenInUseAuthorization()
+        case .authorizedWhenInUse, .authorizedAlways:
+            locationManager.startUpdatingLocation()
+        }
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        if let coordinates = manager.location?.coordinate {
+            print("new auth coords: \(coordinates.latitude),\(coordinates.longitude)")
+            defaults.set(coordinates.latitude, forKey: "userLat")
+            defaults.set(coordinates.longitude, forKey: "userLon")
+        }
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        
+        if let coordinates = manager.location?.coordinate {
+            print("coords: \(coordinates.latitude),\(coordinates.longitude)")
+            defaults.set(coordinates.latitude, forKey: "userLat")
+            defaults.set(coordinates.longitude, forKey: "userLon")
+        }
+        setupChatBar()
     }
     
 }
