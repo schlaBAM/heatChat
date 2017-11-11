@@ -9,6 +9,7 @@
 import UIKit
 import FirebaseAuth
 import FirebaseDatabase
+import QuartzCore
 import CoreLocation
 
 @IBDesignable
@@ -171,28 +172,41 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
         
         //message from other user
         var textLabel = UITextView(frame: CGRect(x: view.bounds.width * 0.05, y: yHeight, width: view.bounds.width * 0.65, height: view.bounds.height * 0.125))
-        textLabel.backgroundColor = UIColor(red: 0.6078, green: 1, blue: 0.7373, alpha: 1.0) /* #9bffbc */
+        textLabel.backgroundColor = .white
+//            UIColor(red: 0.9255, green: 0.9255, blue: 0.9882, alpha: 1.0) /* #ececfc */
+    
+//            UIColor(red: 0.6078, green: 1, blue: 0.7373, alpha: 1.0) /* #9bffbc */
         textLabel.text = chatMessage.text
         textLabel.font = UIFont(name: "PingFangHK-Regular", size: 14)
+//        textLabel.font = UIFont.systemFont(ofSize: 14)
+        
 //        textLabel.contentInset = UIEdgeInsets(top: 0, left: 5, bottom: 0, right: 5)
         textLabel.sizeToFit()
         
         if defaults.string(forKey: "userID") == chatMessage.uid {
             textLabel = UITextView(frame: CGRect(x: view.bounds.width * 0.5, y: yHeight, width: view.bounds.width * 0.65, height: view.bounds.height * 0.125))
-            textLabel.backgroundColor = UIColor(red: 12/255, green: 64/255, blue: 117/255, alpha: 1.0) /* #0c4075 */
+            textLabel.backgroundColor = UIColor(red: 0.298, green: 0.8706, blue: 1, alpha: 1.0) /* #4cdeff */
+
+//                UIColor(red: 0.2275, green: 0.3255, blue: 0.3961, alpha: 1.0) /* #3a5365 */
+//                UIColor(red: 12/255, green: 64/255, blue: 117/255, alpha: 1.0) /* #0c4075 */
 //                UIColor(red: 10/255, green: 58/255, blue: 110/255, alpha: 1.0) /* #0a3a6e */
 //                UIColor(red: 0.298, green: 0.8706, blue: 1, alpha: 1.0) /* #4cdeff */
-            textLabel.font = UIFont(name: "PingFangHK-Regular", size: 14)
-            textLabel.textColor = .white
+//            textLabel.font = UIFont(name: "PingFangHK-Regular", size: 14)
+            textLabel.font = UIFont.systemFont(ofSize: 14)
+            textLabel.textColor = .black
             textLabel.text = chatMessage.text
 //            textLabel.contentInset = UIEdgeInsets(top: 0, left: 5, bottom: 0, right: 5)
             textLabel.sizeToFit()
             textLabel.center.x = messageView.bounds.width*0.95 - textLabel.bounds.width * 0.5
         }
         
+        textLabel.layer.shadowColor = UIColor.black.cgColor
+        textLabel.layer.shadowOffset = CGSize(width: 12, height: 12)
+        textLabel.layer.shadowOpacity = 1.0
+        textLabel.layer.shadowRadius = 5.0
         textLabel.layer.cornerRadius = 10
-        textLabel.layer.borderColor = UIColor.black.cgColor
-        textLabel.layer.borderWidth = 1
+//        textLabel.layer.borderColor = UIColor.black.cgColor
+//        textLabel.layer.borderWidth = 1
         textLabel.isUserInteractionEnabled = false
         return textLabel
     }
@@ -276,17 +290,23 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         //clear messageView, load messages, dismiss sidebar
         tableView.deselectRow(at: indexPath, animated: true)
+        
+        let ref = Database.database().reference()
     
         if selectedUni == nil || selectedUni!.path != schools[indexPath.row].path {
+            if selectedUni != nil {
+                ref.child(selectedUni!.path).child("messages").removeAllObservers()
+            }
             selectedUni = schools[indexPath.row]
             messages.removeAll()
             messageViews.removeAll()
             messageView.subviews.forEach({$0.removeFromSuperview()})
             
-            Database.database().reference().child(selectedUni!.path).child("messages").queryOrdered(byChild: "time").queryLimited(toLast: 100).observe(DataEventType.childAdded) { (data) in
+            ref.child(selectedUni!.path).child("messages").queryOrdered(byChild: "time").queryLimited(toLast: 100).observe(DataEventType.childAdded) { (data) in
                 guard let data = data.value as? [String : Any] else {return}
                 self.createChatMessage(data: data)
             }
+            
         }
         
         DispatchQueue.main.async {
