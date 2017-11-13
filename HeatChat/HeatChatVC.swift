@@ -92,6 +92,8 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
         sendButton.layer.cornerRadius = 5
         
         self.chatBox.delegate = self
+//        chatBox.translatesAutoresizingMaskIntoConstraints = false
+//        chatBox.isScrollEnabled = false
         chatBox.layer.cornerRadius = 10
         chatBox.layer.borderWidth = 1
     }
@@ -132,6 +134,18 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
             UIView.animate(withDuration: 0.3, delay: 0, options: UIViewAnimationOptions.curveEaseInOut, animations: {
                 sidebar.center.x -= self.view.bounds.width * 0.5
             })
+        }
+    }
+    
+    @IBAction func userSwipedRight(_ sender: Any) {
+        if sideBar.center.x < 0 {
+            animateSideBar(sideBar)
+        }
+    }
+    
+    @IBAction func userTappedView(_ sender: Any) {
+        if sideBar.center.x > 0 {
+            animateSideBar(sideBar)
         }
     }
     
@@ -253,6 +267,8 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
 //            messageView.contentInset = insets
 //            messageView.scrollIndicatorInsets = insets
 
+            messageView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: keyboardRect.height + chatView.frame.height, right: 0)
+
             var offset = messageView.contentOffset
             offset.y = messageView.contentSize.height + messageView.contentInset.bottom - messageView.bounds.height
             messageView.setContentOffset(offset, animated: true)
@@ -265,15 +281,9 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
             let keyboardRect = keyboardFrame.cgRectValue
             stackView.frame.origin.y += keyboardRect.height
             
-//            var offset = messageView.contentOffset
+            messageView.contentSize.height = yHeight
+        messageView.scrollRectToVisible((messageViews.last?.frame)!, animated: true)
             
-//            offset.y -= messageView.contentSize.height + messageView.contentInset.bottom - messageView.bounds.height
-//            messageView.setContentOffset(offset, animated: true)
-            
-            let insets = UIEdgeInsets.zero
-            messageView.contentInset = insets
-            messageView.scrollIndicatorInsets = insets
-
         }
         if chatBox.text == ""{
             chatBox.text = "Add a message.."
