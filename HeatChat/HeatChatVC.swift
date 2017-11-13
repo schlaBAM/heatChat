@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import FirebaseAuth
 import FirebaseDatabase
 import QuartzCore
 import CoreLocation
@@ -22,18 +21,26 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
     @IBOutlet weak var stackView: UIStackView!
     
     let appDel = UIApplication.shared.delegate as! AppDelegate
+    let defaults = UserDefaults.standard
+
     var messages = [Message]()
     var messageViews = [UIView]()
     var schools = [School]()
     var yHeight: CGFloat = 0.0
-    let defaults = UserDefaults.standard
     var sideBar = UITableView()
     var selectedUni : School?
     var locationManager = CLLocationManager()
+    var ref = DatabaseReference()
 
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        locationManager.delegate = self
+        locationManager.desiredAccuracy = kCLLocationAccuracyBest
+        locationManager.distanceFilter = 20
+
+        ref = Database.database().reference()
 
         loadUI()
         setupNotifications()
@@ -60,15 +67,12 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
     func loadUI(){
       
         getSchools()
-        
-        locationManager.delegate = self
-        locationManager.desiredAccuracy = kCLLocationAccuracyBest
             
         let navHeight = self.navigationController!.navigationBar.frame.height
-
+        
         yHeight = navHeight * 1.05
         
-        sideBar = UITableView(frame: CGRect(x: 0 - view.bounds.width * 0.5, y: navHeight, width: view.bounds.width * 0.5, height: view.bounds.height - (navHeight)))
+        sideBar = UITableView(frame: CGRect(x: 0 - view.bounds.width * 0.5, y: self.navigationController!.navigationBar.frame.height * 1.49, width: view.bounds.width * 0.5, height: view.bounds.height - navHeight * 1.5 ))
         sideBar.delegate = self
         sideBar.dataSource = self
         sideBar.isHidden = false
@@ -76,6 +80,7 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
         sideBar.layer.borderColor = UIColor.black.cgColor
         sideBar.layer.cornerRadius = 5
         sideBar.separatorStyle = .none
+
         sideBar.reloadData()
         view.addSubview(sideBar)
         animateSideBar(sideBar)
@@ -106,11 +111,13 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
                 chatBox.layer.borderColor = UIColor.gray.cgColor
                 chatBox.isEditable = false
                 chatBox.text = "Too far away to post!"
+                sendButton.isEnabled = false
 
             }else{
                 chatBox.layer.borderColor = UIColor.black.cgColor
                 chatBox.isEditable = true
                 chatBox.text = "Add a message.."
+                sendButton.isEnabled = true
             }
         }
     }
@@ -171,7 +178,7 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
     func createTextView(_ chatMessage : Message) -> UITextView {
         
         //message from other user
-        var textLabel = UITextView(frame: CGRect(x: view.bounds.width * 0.05, y: yHeight, width: view.bounds.width * 0.65, height: view.bounds.height * 0.125))
+        var textLabel = UITextView(frame: CGRect(x: view.bounds.width * 0.025, y: yHeight, width: view.bounds.width * 0.65, height: view.bounds.height * 0.125))
         textLabel.backgroundColor = .white
 //            UIColor(red: 0.9255, green: 0.9255, blue: 0.9882, alpha: 1.0) /* #ececfc */
     
@@ -197,7 +204,7 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
             textLabel.text = chatMessage.text
 //            textLabel.contentInset = UIEdgeInsets(top: 0, left: 5, bottom: 0, right: 5)
             textLabel.sizeToFit()
-            textLabel.center.x = messageView.bounds.width*0.95 - textLabel.bounds.width * 0.5
+            textLabel.center.x = messageView.bounds.width*0.975 - textLabel.bounds.width * 0.5
         }
         
         textLabel.layer.shadowColor = UIColor.black.cgColor
@@ -215,9 +222,9 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
         
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "MMM d h:mm a"
-        let date = Date(timeIntervalSince1970: Double(chatMessage.time))
+        let date = Date(timeIntervalSince1970: Double(chatMessage.time / 1000))
         
-        let timeLabel = UILabel(frame: CGRect(x: messageView.bounds.width * 1.02, y: yHeight, width: messageView.bounds.width * 0.2, height: messageView.bounds.height * 0.1))
+        let timeLabel = UILabel(frame: CGRect(x: messageView.bounds.width * 1.005, y: yHeight, width: messageView.bounds.width * 0.2, height: messageView.bounds.height * 0.1))
         timeLabel.text = dateFormatter.string(from: date)
         timeLabel.font = UIFont(name: "PingFangHK-Regular", size: 10)
         timeLabel.sizeToFit()
@@ -241,7 +248,11 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
         if let keyboardFrame: NSValue = notification.userInfo?[UIKeyboardFrameEndUserInfoKey] as? NSValue {
             let keyboardRect = keyboardFrame.cgRectValue
             stackView.frame.origin.y -= keyboardRect.height
-            
+//
+//            let insets = UIEdgeInsetsMake(0,0,messageView.contentSize.height + messageView.contentInset.bottom - messageView.bounds.height,0)
+//            messageView.contentInset = insets
+//            messageView.scrollIndicatorInsets = insets
+
             var offset = messageView.contentOffset
             offset.y = messageView.contentSize.height + messageView.contentInset.bottom - messageView.bounds.height
             messageView.setContentOffset(offset, animated: true)
@@ -255,8 +266,13 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
             stackView.frame.origin.y += keyboardRect.height
             
 //            var offset = messageView.contentOffset
+            
 //            offset.y -= messageView.contentSize.height + messageView.contentInset.bottom - messageView.bounds.height
 //            messageView.setContentOffset(offset, animated: true)
+            
+            let insets = UIEdgeInsets.zero
+            messageView.contentInset = insets
+            messageView.scrollIndicatorInsets = insets
 
         }
         if chatBox.text == ""{
@@ -273,10 +289,10 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
     }
 
     @IBAction func sendTapped(_ sender: Any) {
-        let message = ["lat" : defaults.double(forKey: "userLat"), "lon" : defaults.double(forKey: "userLon"), "text" : chatBox.text, "time" : Int64(NSDate().timeIntervalSince1970), "uid" : defaults.string(forKey: "userID")!] as [String : Any]
+        let message = ["lat" : defaults.double(forKey: "userLat"), "lon" : defaults.double(forKey: "userLon"), "text" : chatBox.text, "time" : Int64(NSDate().timeIntervalSince1970 * 1000.0), "uid" : defaults.string(forKey: "userID")!] as [String : Any]
         if let selectedUni = selectedUni {
             if chatBox.text != "" {
-                Database.database().reference().child(selectedUni.path).child("messages").childByAutoId().setValue(message)
+                ref.child("schoolMessages").child(selectedUni.path).child("messages").childByAutoId().setValue(message)
                 chatBox.text.removeAll()
                 view.endEditing(true)
             }
@@ -290,19 +306,17 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         //clear messageView, load messages, dismiss sidebar
         tableView.deselectRow(at: indexPath, animated: true)
-        
-        let ref = Database.database().reference()
     
         if selectedUni == nil || selectedUni!.path != schools[indexPath.row].path {
             if selectedUni != nil {
-                ref.child(selectedUni!.path).child("messages").removeAllObservers()
+                ref.child("schoolMessages").child(selectedUni!.path).child("messages").removeAllObservers()
             }
             selectedUni = schools[indexPath.row]
             messages.removeAll()
             messageViews.removeAll()
             messageView.subviews.forEach({$0.removeFromSuperview()})
             
-            ref.child(selectedUni!.path).child("messages").queryOrdered(byChild: "time").queryLimited(toLast: 100).observe(DataEventType.childAdded) { (data) in
+            ref.child("schoolMessages").child(selectedUni!.path).child("messages").queryOrdered(byChild: "time").queryLimited(toLast: 100).observe(DataEventType.childAdded) { (data) in
                 guard let data = data.value as? [String : Any] else {return}
                 self.createChatMessage(data: data)
             }

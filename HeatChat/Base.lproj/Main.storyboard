@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="yjL-O8-b41">
-    <device id="retina4_0" orientation="portrait">
+    <device id="retina5_9" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
@@ -21,30 +21,30 @@
             <objects>
                 <viewController id="BYZ-38-t0r" customClass="HeatChatVC" customModule="HeatChat" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="PXQ-CK-RIK">
-                                <rect key="frame" x="0.0" y="64" width="320" height="504"/>
+                                <rect key="frame" x="0.0" y="88" width="375" height="690"/>
                                 <subviews>
                                     <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" alwaysBounceHorizontal="YES" showsHorizontalScrollIndicator="NO" indicatorStyle="black" translatesAutoresizingMaskIntoConstraints="NO" id="AC0-gj-Tnr">
-                                        <rect key="frame" x="0.0" y="0.0" width="320" height="455"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="375" height="640"/>
                                         <color key="backgroundColor" red="0.92156862750000001" green="0.92156862750000001" blue="0.92156862750000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                     </scrollView>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="RzS-7K-f09">
-                                        <rect key="frame" x="0.0" y="455" width="320" height="49"/>
+                                        <rect key="frame" x="0.0" y="640" width="375" height="50"/>
                                         <subviews>
                                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" text="Add a message.." textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="Ir7-ls-MNQ">
-                                                <rect key="frame" x="8" y="6" width="209" height="35"/>
+                                                <rect key="frame" x="8" y="6" width="264" height="36"/>
                                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences" returnKeyType="done"/>
                                             </textView>
                                             <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2f1-Z2-z5T">
-                                                <rect key="frame" x="239" y="6" width="66" height="35"/>
+                                                <rect key="frame" x="301" y="6" width="66" height="35"/>
                                                 <color key="backgroundColor" red="0.60784313725490191" green="1" blue="0.70980392156862748" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 <constraints>
-                                                    <constraint firstAttribute="width" constant="66" id="LQ6-nj-gOZ"/>
+                                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="66" id="LQ6-nj-gOZ"/>
                                                 </constraints>
                                                 <fontDescription key="fontDescription" name="PingFangHK-Medium" family="PingFang HK" pointSize="15"/>
                                                 <state key="normal" title="Send"/>
@@ -53,22 +53,25 @@
                                                 </connections>
                                             </button>
                                         </subviews>
-                                        <color key="backgroundColor" white="0.95054796006944442" alpha="1" colorSpace="calibratedWhite"/>
+                                        <color key="backgroundColor" red="0.96078431372549022" green="0.96078431372549022" blue="0.96078431372549022" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <constraints>
-                                            <constraint firstItem="Ir7-ls-MNQ" firstAttribute="bottom" secondItem="2f1-Z2-z5T" secondAttribute="bottom" id="Pm5-Wl-28i"/>
+                                            <constraint firstItem="Ir7-ls-MNQ" firstAttribute="bottom" secondItem="2f1-Z2-z5T" secondAttribute="bottom" constant="1" id="Pm5-Wl-28i"/>
                                             <constraint firstItem="Ir7-ls-MNQ" firstAttribute="top" secondItem="RzS-7K-f09" secondAttribute="top" constant="6" id="XNT-7E-vvX"/>
-                                            <constraint firstItem="2f1-Z2-z5T" firstAttribute="leading" secondItem="Ir7-ls-MNQ" secondAttribute="trailing" constant="22" id="cs3-9n-DDW"/>
+                                            <constraint firstItem="2f1-Z2-z5T" firstAttribute="leading" secondItem="Ir7-ls-MNQ" secondAttribute="trailing" constant="29" id="cs3-9n-DDW"/>
                                             <constraint firstItem="Ir7-ls-MNQ" firstAttribute="leading" secondItem="RzS-7K-f09" secondAttribute="leadingMargin" id="fdd-eN-ePK"/>
                                             <constraint firstItem="Ir7-ls-MNQ" firstAttribute="bottom" secondItem="RzS-7K-f09" secondAttribute="bottomMargin" id="ljw-86-rFw"/>
-                                            <constraint firstAttribute="trailing" secondItem="2f1-Z2-z5T" secondAttribute="trailing" constant="15" id="z0r-4g-GAa"/>
+                                            <constraint firstAttribute="trailing" secondItem="2f1-Z2-z5T" secondAttribute="trailing" constant="8" id="z0r-4g-GAa"/>
                                             <constraint firstItem="2f1-Z2-z5T" firstAttribute="centerY" secondItem="RzS-7K-f09" secondAttribute="centerY" constant="-1" id="zLm-KP-QqI"/>
                                         </constraints>
                                     </view>
                                 </subviews>
+                                <constraints>
+                                    <constraint firstAttribute="bottom" secondItem="RzS-7K-f09" secondAttribute="bottom" id="yAi-2x-7SS"/>
+                                </constraints>
                                 <viewLayoutGuide key="safeArea" id="m2m-ws-0F9"/>
                             </stackView>
                         </subviews>
-                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="backgroundColor" red="0.96078431372549022" green="0.96078431372549022" blue="0.96078431372549022" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="PXQ-CK-RIK" secondAttribute="trailing" id="LXN-lr-wmc"/>
                             <constraint firstItem="PXQ-CK-RIK" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="LvV-DZ-f1h"/>
@@ -103,7 +106,7 @@
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="yjL-O8-b41" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="fZV-f8-yIH">
-                        <rect key="frame" x="0.0" y="20" width="320" height="44"/>
+                        <rect key="frame" x="0.0" y="44" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
