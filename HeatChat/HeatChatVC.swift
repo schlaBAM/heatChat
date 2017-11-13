@@ -86,14 +86,12 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
         animateSideBar(sideBar)
         
         messageView.delegate = self
-        messageView.contentSize = CGSize(width: messageView.bounds.width, height: 0)
+        messageView.contentSize = CGSize(width: view.bounds.width, height: 0)
         
         sendButton.layer.borderWidth = 1
         sendButton.layer.cornerRadius = 5
         
         self.chatBox.delegate = self
-//        chatBox.translatesAutoresizingMaskIntoConstraints = false
-//        chatBox.isScrollEnabled = false
         chatBox.layer.cornerRadius = 10
         chatBox.layer.borderWidth = 1
     }
@@ -267,12 +265,15 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
 //            messageView.contentInset = insets
 //            messageView.scrollIndicatorInsets = insets
 
-            messageView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: keyboardRect.height + chatView.frame.height, right: 0)
+//            messageView.contentOffset.y = messageView.contentSize.height - keyboardRect.height - chatView.frame.height
+            
+            
+//            messageView.scrollRectToVisible((messageViews.last?.frame)!, animated: true)
 
             var offset = messageView.contentOffset
             offset.y = messageView.contentSize.height + messageView.contentInset.bottom - messageView.bounds.height
             messageView.setContentOffset(offset, animated: true)
-            
+//
          }
     }
     
@@ -280,9 +281,9 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
         if let keyboardFrame: NSValue = notification.userInfo?[UIKeyboardFrameEndUserInfoKey] as? NSValue {
             let keyboardRect = keyboardFrame.cgRectValue
             stackView.frame.origin.y += keyboardRect.height
-            
-            messageView.contentSize.height = yHeight
-        messageView.scrollRectToVisible((messageViews.last?.frame)!, animated: true)
+//
+//            messageView.contentSize.height = yHeight
+//            messageView.scrollRectToVisible((messageViews.last?.frame)!, animated: true)
             
         }
         if chatBox.text == ""{
