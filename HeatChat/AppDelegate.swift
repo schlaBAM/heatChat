@@ -56,7 +56,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             } else {
                 //                let anon = User(context: (self.appDel.persistentContainer.viewContext))
                 self.defaults.set(user?.uid, forKey: "userID")
-                print(user?.uid)
                 //                self.appDel.saveContext()
             }
         }

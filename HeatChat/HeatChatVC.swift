@@ -22,7 +22,7 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
     
     let appDel = UIApplication.shared.delegate as! AppDelegate
     let defaults = UserDefaults.standard
-
+    
     var messages = [Message]()
     var messageViews = [UIView]()
     var schools = [School]()
@@ -67,12 +67,11 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
     func loadUI(){
       
         getSchools()
-            
-        let navHeight = self.navigationController!.navigationBar.frame.height
         
+        let navHeight = self.navigationController!.navigationBar.frame.height
         yHeight = navHeight * 1.05
         
-        sideBar = UITableView(frame: CGRect(x: 0 - view.bounds.width * 0.5, y: self.navigationController!.navigationBar.frame.height * 1.49, width: view.bounds.width * 0.5, height: view.bounds.height - navHeight * 1.5 ))
+        sideBar = UITableView(frame: CGRect(x: 0 - view.bounds.width * 0.5, y: self.navigationController!.navigationBar.frame.height * 1.45, width: view.bounds.width * 0.5, height: view.bounds.height - navHeight * 1.5 ))
         sideBar.delegate = self
         sideBar.dataSource = self
         sideBar.isHidden = false
@@ -169,7 +168,7 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
         let chatMessage = Message(context: context)
 
         chatMessage.text = (data["text"] as! String).trimmingCharacters(in: .newlines)
-        chatMessage.uid = data["uid"] as! String
+        chatMessage.uid = data["uid"] as? String
         chatMessage.lat = data["lat"] as! Double
         chatMessage.lon = data["lon"] as! Double
         chatMessage.time = data["time"] as! Int64
@@ -181,20 +180,21 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
         messageView.addSubview(timeLabel)
         messageViews.append(textLabel)
         
-        yHeight += textLabel.bounds.height * 1.2
+        yHeight += textLabel.bounds.height + 10
         messageView.contentSize.height = yHeight
-        messageView.scrollRectToVisible((messageViews.last?.frame)!, animated: true)
-
+        
+        if let frame = messageViews.last?.frame {
+            
+            messageView.scrollRectToVisible(CGRect(x: frame.origin.x, y: frame.origin.y, width: frame.width, height: frame.height + 10), animated: true)
+            
+        }
     }
     
     func createTextView(_ chatMessage : Message) -> UITextView {
         
         //message from other user
         var textLabel = UITextView(frame: CGRect(x: view.bounds.width * 0.025, y: yHeight, width: view.bounds.width * 0.65, height: view.bounds.height * 0.125))
-        textLabel.backgroundColor = .white
-//            UIColor(red: 0.9255, green: 0.9255, blue: 0.9882, alpha: 1.0) /* #ececfc */
-    
-//            UIColor(red: 0.6078, green: 1, blue: 0.7373, alpha: 1.0) /* #9bffbc */
+        textLabel.backgroundColor = UIColor(red: 0.8471, green: 0.902, blue: 1, alpha: 1.0) /* #d8e6ff */
         textLabel.text = chatMessage.text
         textLabel.font = UIFont(name: "PingFangHK-Regular", size: 14)
 //        textLabel.font = UIFont.systemFont(ofSize: 14)
@@ -204,15 +204,10 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
         
         if defaults.string(forKey: "userID") == chatMessage.uid {
             textLabel = UITextView(frame: CGRect(x: view.bounds.width * 0.5, y: yHeight, width: view.bounds.width * 0.65, height: view.bounds.height * 0.125))
-            textLabel.backgroundColor = UIColor(red: 0.298, green: 0.8706, blue: 1, alpha: 1.0) /* #4cdeff */
-
-//                UIColor(red: 0.2275, green: 0.3255, blue: 0.3961, alpha: 1.0) /* #3a5365 */
-//                UIColor(red: 12/255, green: 64/255, blue: 117/255, alpha: 1.0) /* #0c4075 */
-//                UIColor(red: 10/255, green: 58/255, blue: 110/255, alpha: 1.0) /* #0a3a6e */
-//                UIColor(red: 0.298, green: 0.8706, blue: 1, alpha: 1.0) /* #4cdeff */
-//            textLabel.font = UIFont(name: "PingFangHK-Regular", size: 14)
-            textLabel.font = UIFont.systemFont(ofSize: 14)
-            textLabel.textColor = .black
+            textLabel.backgroundColor = UIColor(red: 0.6196, green: 0.7529, blue: 1, alpha: 1.0) /* #9ec0ff */
+            textLabel.font = UIFont(name: "PingFangHK-Regular", size: 14)
+//            textLabel.font = UIFont.systemFont(ofSize: 14)
+            textLabel.textColor = .white
             textLabel.text = chatMessage.text
 //            textLabel.contentInset = UIEdgeInsets(top: 0, left: 5, bottom: 0, right: 5)
             textLabel.sizeToFit()
@@ -259,32 +254,34 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
         chatBox.text = ""
         if let keyboardFrame: NSValue = notification.userInfo?[UIKeyboardFrameEndUserInfoKey] as? NSValue {
             let keyboardRect = keyboardFrame.cgRectValue
-            stackView.frame.origin.y -= keyboardRect.height
-//
-//            let insets = UIEdgeInsetsMake(0,0,messageView.contentSize.height + messageView.contentInset.bottom - messageView.bounds.height,0)
+//            stackView.frame.origin.y -= keyboardRect.height
+            
+//            let insets = UIEdgeInsets(top: 0, left: 0, bottom: keyboardRect.height + chatView.frame.height + 10, right: 0)
 //            messageView.contentInset = insets
 //            messageView.scrollIndicatorInsets = insets
+            messageView.frame.origin.y -= keyboardRect.height
+            chatView.frame.origin.y -= keyboardRect.height
+            
 
-//            messageView.contentOffset.y = messageView.contentSize.height - keyboardRect.height - chatView.frame.height
-            
-            
+//            let bottomOffset = CGPoint(x: 0, y: messageView.contentSize.height - messageView.bounds.size.height)
+//            messageView.setContentOffset(bottomOffset, animated: true)
 //            messageView.scrollRectToVisible((messageViews.last?.frame)!, animated: true)
 
-            var offset = messageView.contentOffset
-            offset.y = messageView.contentSize.height + messageView.contentInset.bottom - messageView.bounds.height
-            messageView.setContentOffset(offset, animated: true)
-//
          }
     }
     
     @objc func keyboardIsHiding(_ notification : Notification){
         if let keyboardFrame: NSValue = notification.userInfo?[UIKeyboardFrameEndUserInfoKey] as? NSValue {
             let keyboardRect = keyboardFrame.cgRectValue
-            stackView.frame.origin.y += keyboardRect.height
-//
-//            messageView.contentSize.height = yHeight
-//            messageView.scrollRectToVisible((messageViews.last?.frame)!, animated: true)
+//            stackView.frame.origin.y += keyboardRect.height
             
+            messageView.frame.origin.y += keyboardRect.height
+            chatView.frame.origin.y += keyboardRect.height
+            
+//            var insets = UIEdgeInsets.zero
+//            insets.bottom = 10
+//            messageView.scrollIndicatorInsets = insets
+//            messageView.contentInset = insets
         }
         if chatBox.text == ""{
             chatBox.text = "Add a message.."
