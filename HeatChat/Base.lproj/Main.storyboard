@@ -32,6 +32,7 @@
                                         <color key="backgroundColor" red="0.84705882352941175" green="0.8784313725490196" blue="0.89411764705882346" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <gestureRecognizers/>
                                         <connections>
+                                            <outlet property="delegate" destination="BYZ-38-t0r" id="l7M-ak-NMq"/>
                                             <outletCollection property="gestureRecognizers" destination="vIM-rF-zWh" appends="YES" id="w56-f7-2qf"/>
                                         </connections>
                                     </scrollView>
@@ -43,6 +44,14 @@
                                                 <color key="backgroundColor" red="0.84705882352941175" green="0.90196078431372551" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences" returnKeyType="done"/>
+                                                <userDefinedRuntimeAttributes>
+                                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.borderWidth">
+                                                        <integer key="value" value="1"/>
+                                                    </userDefinedRuntimeAttribute>
+                                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                        <integer key="value" value="10"/>
+                                                    </userDefinedRuntimeAttribute>
+                                                </userDefinedRuntimeAttributes>
                                             </textView>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2f1-Z2-z5T">
                                                 <rect key="frame" x="301" y="6" width="66" height="35"/>
@@ -54,6 +63,14 @@
                                                 <state key="normal" title="Send">
                                                     <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 </state>
+                                                <userDefinedRuntimeAttributes>
+                                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.borderWidth">
+                                                        <integer key="value" value="1"/>
+                                                    </userDefinedRuntimeAttribute>
+                                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                        <integer key="value" value="5"/>
+                                                    </userDefinedRuntimeAttribute>
+                                                </userDefinedRuntimeAttributes>
                                                 <connections>
                                                     <action selector="sendTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="OP9-2c-Fgh"/>
                                                 </connections>
@@ -104,7 +121,6 @@
                         <outlet property="chatView" destination="RzS-7K-f09" id="eLp-sz-8bb"/>
                         <outlet property="messageView" destination="AC0-gj-Tnr" id="QHW-x7-lnl"/>
                         <outlet property="sendButton" destination="2f1-Z2-z5T" id="hrW-cO-bsj"/>
-                        <outlet property="stackView" destination="PXQ-CK-RIK" id="eOu-bd-RmA"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>

@@ -18,7 +18,6 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
     @IBOutlet weak var sendButton: UIButton!
     @IBOutlet weak var chatBox: UITextView!
     @IBOutlet weak var chatView: UIView!
-    @IBOutlet weak var stackView: UIStackView!
     
     let appDel = UIApplication.shared.delegate as! AppDelegate
     let defaults = UserDefaults.standard
@@ -28,6 +27,7 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
     var schools = [School]()
     var yHeight: CGFloat = 0.0
     var sideBar = UITableView()
+    var bar = SideBarView()
     var selectedUni : School?
     var locationManager = CLLocationManager()
     var ref = DatabaseReference()
@@ -40,9 +40,6 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
         locationManager.distanceFilter = 20
 
-        navigationController?.navigationBar.barTintColor = UIColor(red: 0.3922, green: 0.5843, blue: 0.9294, alpha: 1.0) /* #6495ed */
-        navigationController?.navigationBar.titleTextAttributes = [NSAttributedStringKey.foregroundColor: UIColor.white]
-
         ref = Database.database().reference()
 
         loadUI()
@@ -51,9 +48,6 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        
-//        loadMessages()
-        sideBar.reloadData()
         checkLocation()
     }
     
@@ -62,68 +56,68 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
         NotificationCenter.default.removeObserver(self, name: Notification.Name.UIKeyboardWillHide, object: nil)
     }
     
-    func setupNotifications() {
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardIsShowing(_:)), name: Notification.Name.UIKeyboardWillShow, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardIsHiding(_:)), name: Notification.Name.UIKeyboardWillHide, object: nil)
-    }
-    
     func loadUI() {
-      
+        
+        navigationController?.navigationBar.barTintColor = UIColor(red: 0.3922, green: 0.5843, blue: 0.9294, alpha: 1.0) /* #6495ed */
+        navigationController?.navigationBar.titleTextAttributes = [NSAttributedStringKey.foregroundColor: UIColor.white]
+        
         getSchools()
         
         let navHeight = self.navigationController!.navigationBar.frame.height
         yHeight = navHeight * 1.05
         
-        sideBar = UITableView(frame: CGRect(x: 0 - view.bounds.width * 0.5, y: self.navigationController!.navigationBar.frame.height * 1.45, width: view.bounds.width * 0.5, height: view.bounds.height - navHeight * 1.5 ))
-        sideBar.delegate = self
-        sideBar.dataSource = self
-        sideBar.isHidden = false
-        sideBar.layer.borderWidth = 2
-        sideBar.layer.borderColor = UIColor.black.cgColor
-        sideBar.layer.cornerRadius = 5
-        sideBar.separatorStyle = .none
+        let bar = SideBarView(frame: CGRect(x: 0 - view.bounds.width * 0.5, y: self.navigationController!.navigationBar.frame.height * 1.45, width: view.bounds.width * 0.5, height: view.bounds.height - navHeight * 1.5), style: UITableViewStyle.plain)
+        bar.delegate = self
+        bar.dataSource = self
+        view.addSubview(bar)
+        bar.animateSideBar(view)
+//
+//        sideBar = UITableView(frame: CGRect(x: 0 - view.bounds.width * 0.5, y: self.navigationController!.navigationBar.frame.height * 1.45, width: view.bounds.width * 0.5, height: view.bounds.height - navHeight * 1.5))
+//        sideBar.delegate = self
+//        sideBar.dataSource = self
+//        sideBar.layer.borderWidth = 2
+//        sideBar.layer.borderColor = UIColor.black.cgColor
+//        sideBar.layer.cornerRadius = 5
+//        sideBar.separatorStyle = .none
 
-        sideBar.reloadData()
-        view.addSubview(sideBar)
-        animateSideBar(sideBar)
+//        view.addSubview(sideBar)
+//        animateSideBar(sideBar)
         
         messageView.delegate = self
         messageView.contentSize = CGSize(width: view.bounds.width, height: 0)
+        chatBox.delegate = self
         
-        sendButton.layer.borderWidth = 1
-        sendButton.layer.cornerRadius = 5
-        
-        self.chatBox.delegate = self
-        chatBox.layer.cornerRadius = 10
-        chatBox.layer.borderWidth = 1
-        
-        //chatview f5f5f5 bgColor
-//        chatView.layer.borderWidth = 1
+    }
+    
+    func getSchools() {
+        Database.database().reference().child("schools").observeSingleEvent(of: .value, with: { (data) in
+            for item in data.children{
+                let snap = item as! DataSnapshot
+                self.addSchool((snap.value as? [String:Any])!)
+            }
+        })
+    }
+    
+    func addSchool(_ data : [String : Any]) {
+        let school = School(dict: data)
+        schools.append(school!)
+//        sideBar.reloadData()
+        bar.reloadData()
+    }
+    
+    func setupNotifications() {
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardIsShowing(_:)), name: Notification.Name.UIKeyboardWillShow, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardIsHiding(_:)), name: Notification.Name.UIKeyboardWillHide, object: nil)
     }
     
     @IBAction func universityIconTapped(_ sender: Any) {
+        bar.animateSideBar(view)
         animateSideBar(sideBar)
     }
     
-    func setupChatBar() {
-        //if selectedUni is nil, user hasn't selected a university so this setup wouldn't be needed yet.
-        if let selectedUni = selectedUni {
-            let userLocation = CLLocation(latitude: defaults.double(forKey: "userLat"), longitude: defaults.double(forKey: "userLon"))
-            let schoolLocation = CLLocation(latitude: selectedUni.lat, longitude: selectedUni.lon)
-            let distance = userLocation.distance(from: schoolLocation) // in metres
-            
-            if distance > 30000 {
-                chatBox.layer.borderColor = UIColor.gray.cgColor
-                chatBox.isEditable = false
-                chatBox.text = "Too far away to post!"
-                sendButton.isEnabled = false
-
-            }else {
-                chatBox.layer.borderColor = UIColor.black.cgColor
-                chatBox.isEditable = true
-                chatBox.text = "Add a message.."
-                sendButton.isEnabled = true
-            }
+    @IBAction func userTappedView(_ sender: Any) {
+        if sideBar.center.x > 0 {
+            animateSideBar(sideBar)
         }
     }
     
@@ -140,48 +134,12 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
         }
     }
     
-    @IBAction func userSwipedRight(_ sender: Any) {
-        if sideBar.center.x < 0 {
-            animateSideBar(sideBar)
-        }
-    }
-    
-    @IBAction func userTappedView(_ sender: Any) {
-        if sideBar.center.x > 0 {
-            animateSideBar(sideBar)
-        }
-    }
-    
-    func getSchools() {
-        Database.database().reference().child("schools").observeSingleEvent(of: .value, with: { (data) in
-            for item in data.children{
-                let snap = item as! DataSnapshot
-                self.addSchool((snap.value as? [String:Any])!)
-            }
-        })
-    }
-    
-    func addSchool(_ data : [String : Any]) {
-        
-        let school = School(dict: data)
-        schools.append(school!)
-        sideBar.reloadData()
-    }
-    
     func createChatMessage(data : [String : Any]) {
         
-        let context = appDel.persistentContainer.viewContext
-        let chatMessage = Message(context: context)
+        let message = Chat(data: data)
 
-        chatMessage.text = (data["text"] as! String).trimmingCharacters(in: .newlines)
-        chatMessage.uid = data["uid"] as? String
-        chatMessage.lat = data["lat"] as! Double
-        chatMessage.lon = data["lon"] as! Double
-        chatMessage.time = data["time"] as! Int64
-        messages.append(chatMessage)
-        
-        let textLabel = createTextView(chatMessage)
-        let timeLabel = createTimeStamp(textLabel, chatMessage: chatMessage)
+        let textLabel = createTextView(message!)
+        let timeLabel = createTimeStamp(textLabel, chatMessage: message!)
         messageView.addSubview(textLabel)
         messageView.addSubview(timeLabel)
         messageViews.append(textLabel)
@@ -196,7 +154,7 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
         }
     }
     
-    func createTextView(_ chatMessage : Message) -> UITextView {
+    func createTextView(_ chatMessage : /*Message*/ Chat) -> UITextView {
         
         //message from other user
         var textLabel = UITextView(frame: CGRect(x: view.bounds.width * 0.025, y: yHeight, width: view.bounds.width * 0.65, height: view.bounds.height * 0.125))
@@ -226,7 +184,7 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
         return textLabel
     }
     
-    func createTimeStamp(_ textLabel: UITextView, chatMessage : Message) -> UILabel {
+    func createTimeStamp(_ textLabel: UITextView, chatMessage : /*Message*/ Chat) -> UILabel {
         
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "MMM d h:mm a"
@@ -242,41 +200,27 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
         return timeLabel
     }
     
-    //core data for later.
-//    func loadMessages(){
-//        do{
-//            messages = try appDel.persistentContainer.viewContext.fetch(Message.fetchRequest())
-//        }catch{
-//            print(error)
-//        }
-//    }
-    
     @objc func keyboardIsShowing(_ notification : Notification) {
         chatBox.text = ""
         if let keyboardFrame: NSValue = notification.userInfo?[UIKeyboardFrameEndUserInfoKey] as? NSValue {
-            let keyboardRect = keyboardFrame.cgRectValue
-//            stackView.frame.origin.y -= keyboardRect.height
 
+            let keyboardRect = keyboardFrame.cgRectValue
             messageView.frame.origin.y -= keyboardRect.height
             chatView.frame.origin.y -= keyboardRect.height
             
-//            let bottomOffset = CGPoint(x: 0, y: messageView.contentSize.height - messageView.bounds.size.height)
-//            messageView.setContentOffset(bottomOffset, animated: true)
-//            messageView.scrollRectToVisible((messageViews.last?.frame)!, animated: true)
-
          }
     }
     
     @objc func keyboardIsHiding(_ notification : Notification) {
         if let keyboardFrame: NSValue = notification.userInfo?[UIKeyboardFrameEndUserInfoKey] as? NSValue {
-            let keyboardRect = keyboardFrame.cgRectValue
-//            stackView.frame.origin.y += keyboardRect.height
             
+            let keyboardRect = keyboardFrame.cgRectValue
             messageView.frame.origin.y += keyboardRect.height
             chatView.frame.origin.y += keyboardRect.height
             
         }
-        if chatBox.text == ""{
+        
+        if chatBox.text == "" {
             chatBox.text = "Add a message.."
         }
     }
@@ -300,10 +244,31 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
         }
     }
     
-
+    func setupChatBar() {
+        //if selectedUni is nil, user hasn't selected a university so this setup wouldn't be needed yet.
+        if let selectedUni = selectedUni {
+            let userLocation = CLLocation(latitude: defaults.double(forKey: "userLat"), longitude: defaults.double(forKey: "userLon"))
+            let schoolLocation = CLLocation(latitude: selectedUni.lat, longitude: selectedUni.lon)
+            let distance = userLocation.distance(from: schoolLocation) // in metres
+            
+            if distance > 30000 {
+                chatBox.layer.borderColor = UIColor.gray.cgColor
+                chatBox.isEditable = false
+                chatBox.text = "Too far away to post!"
+                sendButton.isEnabled = false
+            } else {
+                chatBox.layer.borderColor = UIColor.black.cgColor
+                chatBox.isEditable = true
+                chatBox.text = "Add a message.."
+                sendButton.isEnabled = true
+            }
+        }
+    }
+    
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         return "Select School"
     }
+    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         //clear messageView, load messages, dismiss sidebar
         tableView.deselectRow(at: indexPath, animated: true)
@@ -328,7 +293,9 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
             self.navigationItem.title = "\(self.selectedUni!.name) Heatchat"
             self.setupChatBar()
         }
-        animateSideBar(sideBar)
+        
+//        animateSideBar(sideBar)
+        bar.animateSideBar(view)
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

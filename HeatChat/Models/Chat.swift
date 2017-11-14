@@ -19,7 +19,7 @@ struct Chat {
     
     init?(data : [String : Any]){
             guard
-                let text = data["text"] as? String,
+                let text = (data["text"] as? String)?.trimmingCharacters(in: .newlines),
                 let uid = data["uid"] as? String,
                 let lat = data["lat"] as? Float,
                 let lon = data["lon"] as? Float,
@@ -37,3 +37,16 @@ struct Chat {
             
         }
     }
+
+/*
+ Core data for later. irrelevant to this file
+         let context = appDel.persistentContainer.viewContext
+         let chatMessage = Message(context: context)
+         chatMessage.text = (data["text"] as! String).trimmingCharacters(in: .newlines)
+         chatMessage.uid = data["uid"] as? String
+         chatMessage.lat = data["lat"] as! Double
+         chatMessage.lon = data["lon"] as! Double
+         chatMessage.time = data["time"] as! Int64
+         messages.append(chatMessage)
+ */
+
