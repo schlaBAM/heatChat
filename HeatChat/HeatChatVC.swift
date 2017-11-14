@@ -40,6 +40,9 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
         locationManager.distanceFilter = 20
 
+        navigationController?.navigationBar.barTintColor = UIColor(red: 0.3922, green: 0.5843, blue: 0.9294, alpha: 1.0) /* #6495ed */
+        navigationController?.navigationBar.titleTextAttributes = [NSAttributedStringKey.foregroundColor: UIColor.white]
+
         ref = Database.database().reference()
 
         loadUI()
@@ -59,12 +62,12 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
         NotificationCenter.default.removeObserver(self, name: Notification.Name.UIKeyboardWillHide, object: nil)
     }
     
-    func setupNotifications(){
+    func setupNotifications() {
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardIsShowing(_:)), name: Notification.Name.UIKeyboardWillShow, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardIsHiding(_:)), name: Notification.Name.UIKeyboardWillHide, object: nil)
     }
     
-    func loadUI(){
+    func loadUI() {
       
         getSchools()
         
@@ -93,13 +96,16 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
         self.chatBox.delegate = self
         chatBox.layer.cornerRadius = 10
         chatBox.layer.borderWidth = 1
+        
+        //chatview f5f5f5 bgColor
+//        chatView.layer.borderWidth = 1
     }
     
     @IBAction func universityIconTapped(_ sender: Any) {
         animateSideBar(sideBar)
     }
     
-    func setupChatBar(){
+    func setupChatBar() {
         //if selectedUni is nil, user hasn't selected a university so this setup wouldn't be needed yet.
         if let selectedUni = selectedUni {
             let userLocation = CLLocation(latitude: defaults.double(forKey: "userLat"), longitude: defaults.double(forKey: "userLon"))
@@ -112,7 +118,7 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
                 chatBox.text = "Too far away to post!"
                 sendButton.isEnabled = false
 
-            }else{
+            }else {
                 chatBox.layer.borderColor = UIColor.black.cgColor
                 chatBox.isEditable = true
                 chatBox.text = "Add a message.."
@@ -121,7 +127,7 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
         }
     }
     
-    func animateSideBar(_ sidebar: UIView){
+    func animateSideBar(_ sidebar: UIView) {
         
         if sidebar.center.x < 0 {
             UIView.animate(withDuration: 0.3, delay: 0, options: UIViewAnimationOptions.curveEaseInOut, animations: {
@@ -146,7 +152,7 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
         }
     }
     
-    func getSchools(){
+    func getSchools() {
         Database.database().reference().child("schools").observeSingleEvent(of: .value, with: { (data) in
             for item in data.children{
                 let snap = item as! DataSnapshot
@@ -155,14 +161,14 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
         })
     }
     
-    func addSchool(_ data : [String : Any]){
+    func addSchool(_ data : [String : Any]) {
         
         let school = School(dict: data)
         schools.append(school!)
         sideBar.reloadData()
     }
     
-    func createChatMessage(data : [String : Any]){
+    func createChatMessage(data : [String : Any]) {
         
         let context = appDel.persistentContainer.viewContext
         let chatMessage = Message(context: context)
@@ -197,16 +203,13 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
         textLabel.backgroundColor = UIColor(red: 0.8471, green: 0.902, blue: 1, alpha: 1.0) /* #d8e6ff */
         textLabel.text = chatMessage.text
         textLabel.font = UIFont(name: "PingFangHK-Regular", size: 14)
-//        textLabel.font = UIFont.systemFont(ofSize: 14)
-        
-//        textLabel.contentInset = UIEdgeInsets(top: 0, left: 5, bottom: 0, right: 5)
         textLabel.sizeToFit()
         
         if defaults.string(forKey: "userID") == chatMessage.uid {
             textLabel = UITextView(frame: CGRect(x: view.bounds.width * 0.5, y: yHeight, width: view.bounds.width * 0.65, height: view.bounds.height * 0.125))
-            textLabel.backgroundColor = UIColor(red: 0.6196, green: 0.7529, blue: 1, alpha: 1.0) /* #9ec0ff */
+            textLabel.backgroundColor = UIColor(red: 0.3922, green: 0.5843, blue: 0.9294, alpha: 1.0) /* #6495ed */
+//                UIColor(red: 0.6196, green: 0.7529, blue: 1, alpha: 1.0) /* #9ec0ff */
             textLabel.font = UIFont(name: "PingFangHK-Regular", size: 14)
-//            textLabel.font = UIFont.systemFont(ofSize: 14)
             textLabel.textColor = .white
             textLabel.text = chatMessage.text
 //            textLabel.contentInset = UIEdgeInsets(top: 0, left: 5, bottom: 0, right: 5)
@@ -219,13 +222,11 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
         textLabel.layer.shadowOpacity = 1.0
         textLabel.layer.shadowRadius = 5.0
         textLabel.layer.cornerRadius = 10
-//        textLabel.layer.borderColor = UIColor.black.cgColor
-//        textLabel.layer.borderWidth = 1
         textLabel.isUserInteractionEnabled = false
         return textLabel
     }
     
-    func createTimeStamp(_ textLabel: UITextView, chatMessage : Message) -> UILabel{
+    func createTimeStamp(_ textLabel: UITextView, chatMessage : Message) -> UILabel {
         
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "MMM d h:mm a"
@@ -250,19 +251,15 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
 //        }
 //    }
     
-    @objc func keyboardIsShowing(_ notification : Notification){
+    @objc func keyboardIsShowing(_ notification : Notification) {
         chatBox.text = ""
         if let keyboardFrame: NSValue = notification.userInfo?[UIKeyboardFrameEndUserInfoKey] as? NSValue {
             let keyboardRect = keyboardFrame.cgRectValue
 //            stackView.frame.origin.y -= keyboardRect.height
-            
-//            let insets = UIEdgeInsets(top: 0, left: 0, bottom: keyboardRect.height + chatView.frame.height + 10, right: 0)
-//            messageView.contentInset = insets
-//            messageView.scrollIndicatorInsets = insets
+
             messageView.frame.origin.y -= keyboardRect.height
             chatView.frame.origin.y -= keyboardRect.height
             
-
 //            let bottomOffset = CGPoint(x: 0, y: messageView.contentSize.height - messageView.bounds.size.height)
 //            messageView.setContentOffset(bottomOffset, animated: true)
 //            messageView.scrollRectToVisible((messageViews.last?.frame)!, animated: true)
@@ -270,7 +267,7 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
          }
     }
     
-    @objc func keyboardIsHiding(_ notification : Notification){
+    @objc func keyboardIsHiding(_ notification : Notification) {
         if let keyboardFrame: NSValue = notification.userInfo?[UIKeyboardFrameEndUserInfoKey] as? NSValue {
             let keyboardRect = keyboardFrame.cgRectValue
 //            stackView.frame.origin.y += keyboardRect.height
@@ -278,10 +275,6 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
             messageView.frame.origin.y += keyboardRect.height
             chatView.frame.origin.y += keyboardRect.height
             
-//            var insets = UIEdgeInsets.zero
-//            insets.bottom = 10
-//            messageView.scrollIndicatorInsets = insets
-//            messageView.contentInset = insets
         }
         if chatBox.text == ""{
             chatBox.text = "Add a message.."
@@ -347,7 +340,6 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
         
         cell.layer.cornerRadius = 5
         cell.textLabel?.font = UIFont(name: "PingFangHK-Light", size: 14)
-//        cell.textLabel?
         cell.textLabel?.text = schools[indexPath.row].name
         
         return cell
