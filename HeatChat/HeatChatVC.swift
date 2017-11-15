@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  HeatChatVC.swift
 //  HeatChat
 //
 //  Created by BAM on 2017-10-30.
@@ -177,30 +177,23 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
     }
     
     private func createTextView(_ chatMessage : Chat) -> UITextView {
-        
         //message from other user
         var textLabel = UITextView(frame: CGRect(x: view.bounds.width * 0.025, y: yHeight, width: view.bounds.width * 0.65, height: view.bounds.height * 0.125))
         textLabel.backgroundColor = .white
-			//UIColor(red: 0.8471, green: 0.902, blue: 1, alpha: 1.0) /* #d8e6ff */
         textLabel.text = chatMessage.text
 		textLabel.font = UIFont.systemFont(ofSize: 14)
 		textLabel.textColor = #colorLiteral(red: 0.3764705882, green: 0.462745098, blue: 0.9882352941, alpha: 1)
-		//80 opacity
-//			UIColor(red: 0.3922, green: 0.5843, blue: 0.9294, alpha: 1.0) /* #6495ed */
-//        textLabel.font = UIFont(name: "PingFangHK-Regular", size: 14)
         textLabel.sizeToFit()
         
         if defaults.string(forKey: "userID") == chatMessage.uid {
             textLabel = UITextView(frame: CGRect(x: view.bounds.width * 0.5, y: yHeight, width: view.bounds.width * 0.65, height: view.bounds.height * 0.125))
             textLabel.backgroundColor = UIColor(red: 0.3922, green: 0.5843, blue: 0.9294, alpha: 1.0) /* #6495ed */
-//            textLabel.font = UIFont(name: "PingFangHK-Regular", size: 14)
 			textLabel.font = UIFont.systemFont(ofSize: 14)
             textLabel.textColor = .white
             textLabel.text = chatMessage.text
             textLabel.sizeToFit()
             textLabel.center.x = messageView.bounds.width*0.975 - textLabel.bounds.width * 0.5
         }
-		#colorLiteral(red: 0.4980392157, green: 0.4980392157, blue: 0.4980392157, alpha: 1)
 		
 		textLabel.clipsToBounds = false
         textLabel.layer.shadowColor = UIColor.gray.cgColor
