@@ -10,6 +10,7 @@ import UIKit
 import FirebaseDatabase
 import QuartzCore
 import CoreLocation
+import Crashlytics
 
 @IBDesignable
 class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UITableViewDataSource, CLLocationManagerDelegate{
