@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="yjL-O8-b41">
-    <device id="retina5_9" orientation="portrait">
+    <device id="retina5_5" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
@@ -21,14 +21,14 @@
             <objects>
                 <viewController id="BYZ-38-t0r" customClass="HeatChatVC" customModule="HeatChat" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="PXQ-CK-RIK">
-                                <rect key="frame" x="0.0" y="88" width="375" height="690"/>
+                                <rect key="frame" x="0.0" y="64" width="414" height="672"/>
                                 <subviews>
                                     <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" alwaysBounceHorizontal="YES" showsHorizontalScrollIndicator="NO" indicatorStyle="black" translatesAutoresizingMaskIntoConstraints="NO" id="AC0-gj-Tnr">
-                                        <rect key="frame" x="0.0" y="0.0" width="375" height="640"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="414" height="625"/>
                                         <color key="backgroundColor" red="0.84705882352941175" green="0.8784313725490196" blue="0.89411764705882346" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <gestureRecognizers/>
                                         <connections>
@@ -36,24 +36,38 @@
                                         </connections>
                                     </scrollView>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="RzS-7K-f09">
-                                        <rect key="frame" x="0.0" y="640" width="375" height="50"/>
+                                        <rect key="frame" x="0.0" y="625" width="414" height="47"/>
                                         <subviews>
                                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" text="Add a message.." textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="Ir7-ls-MNQ">
-                                                <rect key="frame" x="8" y="6" width="276" height="36"/>
-                                                <color key="backgroundColor" red="0.84705882352941175" green="0.90196078431372551" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                <rect key="frame" x="8" y="6" width="315" height="33"/>
+                                                <color key="backgroundColor" red="0.95686274509803915" green="0.97254901960784312" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                <color key="textColor" red="0.33333333333333331" green="0.33333333333333331" blue="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences" returnKeyType="done"/>
+                                                <userDefinedRuntimeAttributes>
+                                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.borderWidth">
+                                                        <integer key="value" value="1"/>
+                                                    </userDefinedRuntimeAttribute>
+                                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                        <integer key="value" value="10"/>
+                                                    </userDefinedRuntimeAttribute>
+                                                </userDefinedRuntimeAttributes>
                                             </textView>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2f1-Z2-z5T">
-                                                <rect key="frame" x="301" y="6" width="66" height="35"/>
+                                                <rect key="frame" x="341" y="6" width="65" height="33"/>
                                                 <color key="backgroundColor" red="0.39215686274509803" green="0.58431372549019611" blue="0.92941176470588238" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                <constraints>
-                                                    <constraint firstAttribute="width" constant="66" id="Ef0-5r-zAv"/>
-                                                </constraints>
                                                 <fontDescription key="fontDescription" name="PingFangHK-Medium" family="PingFang HK" pointSize="15"/>
                                                 <state key="normal" title="Send">
                                                     <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 </state>
+                                                <userDefinedRuntimeAttributes>
+                                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.borderWidth">
+                                                        <integer key="value" value="1"/>
+                                                    </userDefinedRuntimeAttribute>
+                                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                        <integer key="value" value="5"/>
+                                                    </userDefinedRuntimeAttribute>
+                                                </userDefinedRuntimeAttributes>
                                                 <connections>
                                                     <action selector="sendTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="OP9-2c-Fgh"/>
                                                 </connections>
@@ -65,8 +79,9 @@
                                             <constraint firstItem="Ir7-ls-MNQ" firstAttribute="leading" secondItem="RzS-7K-f09" secondAttribute="leadingMargin" id="Pn4-V9-Ac1"/>
                                             <constraint firstItem="Ir7-ls-MNQ" firstAttribute="bottom" secondItem="RzS-7K-f09" secondAttribute="bottomMargin" id="ams-Ax-Ggt"/>
                                             <constraint firstItem="Ir7-ls-MNQ" firstAttribute="top" secondItem="2f1-Z2-z5T" secondAttribute="top" id="bmN-NW-dbr"/>
-                                            <constraint firstItem="Ir7-ls-MNQ" firstAttribute="centerY" secondItem="2f1-Z2-z5T" secondAttribute="centerY" id="cEe-Qg-XIk"/>
                                             <constraint firstAttribute="trailing" secondItem="Ir7-ls-MNQ" secondAttribute="trailing" constant="91" id="e5j-UK-ABG"/>
+                                            <constraint firstItem="Ir7-ls-MNQ" firstAttribute="bottom" secondItem="2f1-Z2-z5T" secondAttribute="bottom" id="fAC-ao-JhS"/>
+                                            <constraint firstItem="2f1-Z2-z5T" firstAttribute="leading" secondItem="Ir7-ls-MNQ" secondAttribute="trailing" constant="18" id="vbK-VC-hwu"/>
                                             <constraint firstItem="Ir7-ls-MNQ" firstAttribute="top" secondItem="RzS-7K-f09" secondAttribute="top" constant="6" id="xD6-Ds-qhJ"/>
                                         </constraints>
                                     </view>
@@ -80,7 +95,7 @@
                                 <viewLayoutGuide key="safeArea" id="m2m-ws-0F9"/>
                             </stackView>
                         </subviews>
-                        <color key="backgroundColor" red="0.96078431372549022" green="0.96078431372549022" blue="0.96078431372549022" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="backgroundColor" red="0.84705882352941175" green="0.8784313725490196" blue="0.89411764705882346" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <gestureRecognizers/>
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="PXQ-CK-RIK" secondAttribute="trailing" id="CRI-cQ-uR4"/>
@@ -104,7 +119,6 @@
                         <outlet property="chatView" destination="RzS-7K-f09" id="eLp-sz-8bb"/>
                         <outlet property="messageView" destination="AC0-gj-Tnr" id="QHW-x7-lnl"/>
                         <outlet property="sendButton" destination="2f1-Z2-z5T" id="hrW-cO-bsj"/>
-                        <outlet property="stackView" destination="PXQ-CK-RIK" id="eOu-bd-RmA"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -122,7 +136,7 @@
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="yjL-O8-b41" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="fZV-f8-yIH">
-                        <rect key="frame" x="0.0" y="44" width="375" height="44"/>
+                        <rect key="frame" x="0.0" y="20" width="414" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>

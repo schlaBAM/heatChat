@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import FirebaseDatabase
 
 struct Chat {
 
@@ -37,3 +36,21 @@ struct Chat {
             
         }
     }
+
+/*
+ 
+ Core data for the future. Unneeded for now and irrelevant to this file.
+ 
+ -----------------------------------------------------------------------
+ 
+ let context = appDel.persistentContainer.viewContext
+ let chatMessage = Message(context: context)
+ 
+ chatMessage.text = (data["text"] as! String).trimmingCharacters(in: .newlines)
+ chatMessage.uid = data["uid"] as? String
+ chatMessage.lat = data["lat"] as! Double
+ chatMessage.lon = data["lon"] as! Double
+ chatMessage.time = data["time"] as! Int64
+ messages.append(chatMessage)
+ 
+ */

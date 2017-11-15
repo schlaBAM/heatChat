@@ -18,19 +18,18 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
     @IBOutlet weak var sendButton: UIButton!
     @IBOutlet weak var chatBox: UITextView!
     @IBOutlet weak var chatView: UIView!
-    @IBOutlet weak var stackView: UIStackView!
     
     let appDel = UIApplication.shared.delegate as! AppDelegate
     let defaults = UserDefaults.standard
     
     var messages = [Message]()
     var messageViews = [UIView]()
-    var schools = [School]()
-    var yHeight: CGFloat = 0.0
     var sideBar = UITableView()
     var selectedUni : School?
-    var locationManager = CLLocationManager()
-    var ref = DatabaseReference()
+    private var schools = [School]()
+    private var yHeight: CGFloat = 0.0
+    private var locationManager = CLLocationManager()
+    private var ref = DatabaseReference()
 
 
     override func viewDidLoad() {
@@ -51,9 +50,7 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        
-//        loadMessages()
-        sideBar.reloadData()
+
         checkLocation()
     }
     
@@ -62,12 +59,12 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
         NotificationCenter.default.removeObserver(self, name: Notification.Name.UIKeyboardWillHide, object: nil)
     }
     
-    func setupNotifications() {
+    private func setupNotifications() {
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardIsShowing(_:)), name: Notification.Name.UIKeyboardWillShow, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardIsHiding(_:)), name: Notification.Name.UIKeyboardWillHide, object: nil)
     }
     
-    func loadUI() {
+    fileprivate func loadUI() {
       
         getSchools()
         
@@ -77,35 +74,26 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
         sideBar = UITableView(frame: CGRect(x: 0 - view.bounds.width * 0.5, y: self.navigationController!.navigationBar.frame.height * 1.45, width: view.bounds.width * 0.5, height: view.bounds.height - navHeight * 1.5 ))
         sideBar.delegate = self
         sideBar.dataSource = self
-        sideBar.isHidden = false
         sideBar.layer.borderWidth = 2
         sideBar.layer.borderColor = UIColor.black.cgColor
         sideBar.layer.cornerRadius = 5
         sideBar.separatorStyle = .none
 
-        sideBar.reloadData()
         view.addSubview(sideBar)
         animateSideBar(sideBar)
         
         messageView.delegate = self
         messageView.contentSize = CGSize(width: view.bounds.width, height: 0)
         
-        sendButton.layer.borderWidth = 1
-        sendButton.layer.cornerRadius = 5
-        
         self.chatBox.delegate = self
-        chatBox.layer.cornerRadius = 10
-        chatBox.layer.borderWidth = 1
         
-        //chatview f5f5f5 bgColor
-//        chatView.layer.borderWidth = 1
     }
     
     @IBAction func universityIconTapped(_ sender: Any) {
         animateSideBar(sideBar)
     }
     
-    func setupChatBar() {
+    private func setupChatBar() {
         //if selectedUni is nil, user hasn't selected a university so this setup wouldn't be needed yet.
         if let selectedUni = selectedUni {
             let userLocation = CLLocation(latitude: defaults.double(forKey: "userLat"), longitude: defaults.double(forKey: "userLon"))
@@ -127,12 +115,15 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
         }
     }
     
-    func animateSideBar(_ sidebar: UIView) {
+    private func animateSideBar(_ sidebar: UIView) {
         
         if sidebar.center.x < 0 {
-            UIView.animate(withDuration: 0.3, delay: 0, options: UIViewAnimationOptions.curveEaseInOut, animations: {
-                sidebar.center.x += self.view.bounds.width * 0.5
-            })
+			UIView.animate(withDuration: 0.3, delay: 0, usingSpringWithDamping: 0.7, initialSpringVelocity: 1, options: UIViewAnimationOptions.curveEaseInOut, animations: {
+					sidebar.center.x += self.view.bounds.width * 0.5
+			})
+//            UIView.animate(withDuration: 0.3, delay: 0, options: UIViewAnimationOptions.curveEaseInOut, animations: {
+//                sidebar.center.x += self.view.bounds.width * 0.5
+//            })
         } else {
             UIView.animate(withDuration: 0.3, delay: 0, options: UIViewAnimationOptions.curveEaseInOut, animations: {
                 sidebar.center.x -= self.view.bounds.width * 0.5
@@ -140,19 +131,13 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
         }
     }
     
-    @IBAction func userSwipedRight(_ sender: Any) {
-        if sideBar.center.x < 0 {
-            animateSideBar(sideBar)
-        }
-    }
-    
-    @IBAction func userTappedView(_ sender: Any) {
+    @IBAction private func userTappedView(_ sender: Any) {
         if sideBar.center.x > 0 {
             animateSideBar(sideBar)
         }
     }
     
-    func getSchools() {
+    private func getSchools() {
         Database.database().reference().child("schools").observeSingleEvent(of: .value, with: { (data) in
             for item in data.children{
                 let snap = item as! DataSnapshot
@@ -161,72 +146,72 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
         })
     }
     
-    func addSchool(_ data : [String : Any]) {
+    private func addSchool(_ data : [String : Any]) {
         
         let school = School(dict: data)
         schools.append(school!)
         sideBar.reloadData()
     }
     
-    func createChatMessage(data : [String : Any]) {
+    private func createChatMessage(data : [String : Any]) {
         
-        let context = appDel.persistentContainer.viewContext
-        let chatMessage = Message(context: context)
-
-        chatMessage.text = (data["text"] as! String).trimmingCharacters(in: .newlines)
-        chatMessage.uid = data["uid"] as? String
-        chatMessage.lat = data["lat"] as! Double
-        chatMessage.lon = data["lon"] as! Double
-        chatMessage.time = data["time"] as! Int64
-        messages.append(chatMessage)
+        let chatMessage = Chat(data: data)
         
-        let textLabel = createTextView(chatMessage)
-        let timeLabel = createTimeStamp(textLabel, chatMessage: chatMessage)
-        messageView.addSubview(textLabel)
-        messageView.addSubview(timeLabel)
-        messageViews.append(textLabel)
-        
-        yHeight += textLabel.bounds.height + 10
-        messageView.contentSize.height = yHeight
-        
-        if let frame = messageViews.last?.frame {
+        if let chatMessage = chatMessage {
             
-            messageView.scrollRectToVisible(CGRect(x: frame.origin.x, y: frame.origin.y, width: frame.width, height: frame.height + 10), animated: true)
+            let textLabel = createTextView(chatMessage)
+            let timeLabel = createTimeStamp(textLabel, chatMessage: chatMessage)
+            messageView.addSubview(textLabel)
+            messageView.addSubview(timeLabel)
+            messageViews.append(textLabel)
             
+            yHeight += textLabel.bounds.height + 10
+            messageView.contentSize.height = yHeight
+            
+            if let frame = messageViews.last?.frame {
+                
+                messageView.scrollRectToVisible(CGRect(x: frame.origin.x, y: frame.origin.y, width: frame.width, height: frame.height + 10), animated: true)
+                
+            }
         }
     }
     
-    func createTextView(_ chatMessage : Message) -> UITextView {
+    private func createTextView(_ chatMessage : Chat) -> UITextView {
         
         //message from other user
         var textLabel = UITextView(frame: CGRect(x: view.bounds.width * 0.025, y: yHeight, width: view.bounds.width * 0.65, height: view.bounds.height * 0.125))
-        textLabel.backgroundColor = UIColor(red: 0.8471, green: 0.902, blue: 1, alpha: 1.0) /* #d8e6ff */
+        textLabel.backgroundColor = .white
+			//UIColor(red: 0.8471, green: 0.902, blue: 1, alpha: 1.0) /* #d8e6ff */
         textLabel.text = chatMessage.text
-        textLabel.font = UIFont(name: "PingFangHK-Regular", size: 14)
+		textLabel.font = UIFont.systemFont(ofSize: 14)
+		textLabel.textColor = #colorLiteral(red: 0.3764705882, green: 0.462745098, blue: 0.9882352941, alpha: 1)
+		//80 opacity
+//			UIColor(red: 0.3922, green: 0.5843, blue: 0.9294, alpha: 1.0) /* #6495ed */
+//        textLabel.font = UIFont(name: "PingFangHK-Regular", size: 14)
         textLabel.sizeToFit()
         
         if defaults.string(forKey: "userID") == chatMessage.uid {
             textLabel = UITextView(frame: CGRect(x: view.bounds.width * 0.5, y: yHeight, width: view.bounds.width * 0.65, height: view.bounds.height * 0.125))
             textLabel.backgroundColor = UIColor(red: 0.3922, green: 0.5843, blue: 0.9294, alpha: 1.0) /* #6495ed */
-//                UIColor(red: 0.6196, green: 0.7529, blue: 1, alpha: 1.0) /* #9ec0ff */
-            textLabel.font = UIFont(name: "PingFangHK-Regular", size: 14)
+//            textLabel.font = UIFont(name: "PingFangHK-Regular", size: 14)
+			textLabel.font = UIFont.systemFont(ofSize: 14)
             textLabel.textColor = .white
             textLabel.text = chatMessage.text
-//            textLabel.contentInset = UIEdgeInsets(top: 0, left: 5, bottom: 0, right: 5)
             textLabel.sizeToFit()
             textLabel.center.x = messageView.bounds.width*0.975 - textLabel.bounds.width * 0.5
         }
-        
-        textLabel.layer.shadowColor = UIColor.black.cgColor
-        textLabel.layer.shadowOffset = CGSize(width: 12, height: 12)
+		#colorLiteral(red: 0.4980392157, green: 0.4980392157, blue: 0.4980392157, alpha: 1)
+		
+		textLabel.clipsToBounds = false
+        textLabel.layer.shadowColor = UIColor.gray.cgColor
+        textLabel.layer.shadowOffset = CGSize(width: 1, height: 1)
         textLabel.layer.shadowOpacity = 1.0
-        textLabel.layer.shadowRadius = 5.0
         textLabel.layer.cornerRadius = 10
         textLabel.isUserInteractionEnabled = false
         return textLabel
     }
     
-    func createTimeStamp(_ textLabel: UITextView, chatMessage : Message) -> UILabel {
+    private func createTimeStamp(_ textLabel: UITextView, chatMessage : Chat) -> UILabel {
         
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "MMM d h:mm a"
@@ -242,41 +227,27 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
         return timeLabel
     }
     
-    //core data for later.
-//    func loadMessages(){
-//        do{
-//            messages = try appDel.persistentContainer.viewContext.fetch(Message.fetchRequest())
-//        }catch{
-//            print(error)
-//        }
-//    }
-    
-    @objc func keyboardIsShowing(_ notification : Notification) {
+    @objc private func keyboardIsShowing(_ notification : Notification) {
         chatBox.text = ""
         if let keyboardFrame: NSValue = notification.userInfo?[UIKeyboardFrameEndUserInfoKey] as? NSValue {
+            
             let keyboardRect = keyboardFrame.cgRectValue
-//            stackView.frame.origin.y -= keyboardRect.height
-
             messageView.frame.origin.y -= keyboardRect.height
             chatView.frame.origin.y -= keyboardRect.height
-            
-//            let bottomOffset = CGPoint(x: 0, y: messageView.contentSize.height - messageView.bounds.size.height)
-//            messageView.setContentOffset(bottomOffset, animated: true)
-//            messageView.scrollRectToVisible((messageViews.last?.frame)!, animated: true)
 
          }
     }
     
-    @objc func keyboardIsHiding(_ notification : Notification) {
+    @objc private func keyboardIsHiding(_ notification : Notification) {
         if let keyboardFrame: NSValue = notification.userInfo?[UIKeyboardFrameEndUserInfoKey] as? NSValue {
-            let keyboardRect = keyboardFrame.cgRectValue
-//            stackView.frame.origin.y += keyboardRect.height
             
+            let keyboardRect = keyboardFrame.cgRectValue
             messageView.frame.origin.y += keyboardRect.height
             chatView.frame.origin.y += keyboardRect.height
             
         }
-        if chatBox.text == ""{
+        
+        if chatBox.text == "" {
             chatBox.text = "Add a message.."
         }
     }
@@ -289,7 +260,7 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
         return true
     }
 
-    @IBAction func sendTapped(_ sender: Any) {
+    @IBAction private func sendTapped(_ sender: Any) {
         let message = ["lat" : defaults.double(forKey: "userLat"), "lon" : defaults.double(forKey: "userLon"), "text" : chatBox.text, "time" : Int64(NSDate().timeIntervalSince1970 * 1000.0), "uid" : defaults.string(forKey: "userID")!] as [String : Any]
         if let selectedUni = selectedUni {
             if chatBox.text != "" {
@@ -345,7 +316,7 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
         return cell
     }
     
-    func checkLocation() {
+    private func checkLocation() {
         
         switch(CLLocationManager.authorizationStatus()) {
         case .denied, .notDetermined, .restricted:
