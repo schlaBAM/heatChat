@@ -2,11 +2,11 @@
   "images" : [
     {
       "idiom" : "universal",
+      "filename" : "app_icon_1024.png",
       "scale" : "1x"
     },
     {
       "idiom" : "universal",
-      "filename" : "beisbol.png",
       "scale" : "2x"
     },
     {

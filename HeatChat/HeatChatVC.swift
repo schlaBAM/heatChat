@@ -257,14 +257,14 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
     @IBAction private func sendTapped(_ sender: Any) {
         let message = ["lat" : defaults.double(forKey: "userLat"), "lon" : defaults.double(forKey: "userLon"), "text" : chatBox.text, "time" : Int64(NSDate().timeIntervalSince1970 * 1000.0), "uid" : defaults.string(forKey: "userID")!] as [String : Any]
         if let selectedUni = selectedUni {
-            if chatBox.text != "" {
+			//temporary until I fix placeholder issues.
+            if chatBox.text != "" && chatBox.text != "Add a message.." {
                 ref.child("schoolMessages").child(selectedUni.path).child("messages").childByAutoId().setValue(message)
                 chatBox.text.removeAll()
                 view.endEditing(true)
             }
         }
     }
-    
 
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         return "Select School"
