@@ -10,8 +10,7 @@ import Foundation
 import CoreLocation
 
 protocol UserLocationManagerDelegate{
-    func userDidUpdateLocation(location : CLLocation)
-    func userDidChangeAuthStatus(status : CLAuthorizationStatus)
+    func userDidUpdateLocationStatus()
 }
 
 class UserLocationManager : NSObject, CLLocationManagerDelegate {
@@ -32,24 +31,21 @@ class UserLocationManager : NSObject, CLLocationManagerDelegate {
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        updateLocation(manager)
+        self.delegate.userDidUpdateLocationStatus()
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        updateLocation(manager)
+        self.delegate.userDidUpdateLocationStatus()
+    }
+    
+    private func updateLocation(_ manager: CLLocationManager){
         if let coordinates = manager.location?.coordinate {
             print("coords: \(coordinates.latitude),\(coordinates.longitude)")
             defaults.set(coordinates.latitude, forKey: "userLat")
             defaults.set(coordinates.longitude, forKey: "userLon")
         }
-        //setup chatbar
     }
-    
-    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
-        if let coordinates = manager.location?.coordinate {
-            print("new auth coords: \(coordinates.latitude),\(coordinates.longitude)")
-            defaults.set(coordinates.latitude, forKey: "userLat")
-            defaults.set(coordinates.longitude, forKey: "userLon")
-        }
-        //setup chatbar
-    }
-    
-    
-    
 }
 

@@ -13,7 +13,7 @@ import CoreLocation
 import Crashlytics
 
 @IBDesignable
-class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UITableViewDataSource, CLLocationManagerDelegate{
+class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UITableViewDataSource, UserLocationManagerDelegate{
 
     @IBOutlet weak var messageView: UIScrollView!
     @IBOutlet weak var sendButton: UIButton!
@@ -29,16 +29,14 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
     var selectedUni : School?
     private var schools = [School]()
     private var yHeight: CGFloat = 0.0
-    private var locationManager = CLLocationManager()
     private var ref = DatabaseReference()
+	let userLocationManager = UserLocationManager.sharedManager
 
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        locationManager.delegate = self
-        locationManager.desiredAccuracy = kCLLocationAccuracyBest
-        locationManager.distanceFilter = 20
+		
+		userLocationManager.delegate = self
 
         navigationController?.navigationBar.barTintColor = UIColor(red: 0.3922, green: 0.5843, blue: 0.9294, alpha: 1.0) /* #6495ed */
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedStringKey.foregroundColor: UIColor.white]
@@ -58,6 +56,9 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
     override func viewWillDisappear(_ animated: Bool) {
         NotificationCenter.default.removeObserver(self, name: Notification.Name.UIKeyboardWillShow, object: nil)
         NotificationCenter.default.removeObserver(self, name: Notification.Name.UIKeyboardWillHide, object: nil)
+		if chatBox.isFirstResponder {
+			chatBox.resignFirstResponder()
+		}
     }
     
     private func setupNotifications() {
@@ -247,6 +248,7 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
         if chatBox.text == "" {
             chatBox.text = "Add a message.."
         }
+		
     }
     
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
@@ -317,30 +319,19 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
         
         switch(CLLocationManager.authorizationStatus()) {
         case .denied, .notDetermined, .restricted:
-            locationManager.requestWhenInUseAuthorization()
+            CLLocationManager().requestWhenInUseAuthorization()
         case .authorizedWhenInUse, .authorizedAlways:
-            locationManager.startUpdatingLocation()
+            CLLocationManager().startUpdatingLocation()
         }
     }
-    
-    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
-        if let coordinates = manager.location?.coordinate {
-            print("new auth coords: \(coordinates.latitude),\(coordinates.longitude)")
-            defaults.set(coordinates.latitude, forKey: "userLat")
-            defaults.set(coordinates.longitude, forKey: "userLon")
-        }
+	
+	func userDidUpdateLocationStatus() {
 		setupChatBar()
-    }
-    
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        
-        if let coordinates = manager.location?.coordinate {
-            print("coords: \(coordinates.latitude),\(coordinates.longitude)")
-            defaults.set(coordinates.latitude, forKey: "userLat")
-            defaults.set(coordinates.longitude, forKey: "userLon")
-        }
-        setupChatBar()
-    }
+	}
+	
+	func userDidChangeAuthStatus() {
+		setupChatBar()
+	}
     
 }
 
