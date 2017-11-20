@@ -24,7 +24,7 @@ struct Chat {
                 let lon = data["lon"] as? Float,
                 let time = data["time"] as? CLong
                 else {
-                    print("Unable to generate message")
+                    print("Unable to generate message: \(String(describing: data["text"])), \(String(describing: data["uid"])), \(String(describing: data["lat"])), \(String(describing: data["lon"])), \(String(describing: data["time"]))")
                     return nil
             }
             

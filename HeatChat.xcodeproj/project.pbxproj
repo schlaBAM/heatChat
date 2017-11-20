@@ -20,6 +20,7 @@
 		A962F4101FA802C40097935A /* HeatChatUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A962F40F1FA802C40097935A /* HeatChatUITests.swift */; };
 		A962F4201FA806520097935A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A962F41F1FA806410097935A /* GoogleService-Info.plist */; };
 		A9B52C121FB1845A006A4B33 /* School.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9B52C111FB1845A006A4B33 /* School.swift */; };
+		A9D197441FC2676E0082CC64 /* UserLocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9D197431FC2676E0082CC64 /* UserLocationManager.swift */; };
 		F266FEDEC37EC976388E776F /* Pods_HeatChat.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A6567089AECF0424FB43F87 /* Pods_HeatChat.framework */; };
 /* End PBXBuildFile section */
 
@@ -64,6 +65,7 @@
 		A962F41F1FA806410097935A /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		A9B52C111FB1845A006A4B33 /* School.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = School.swift; sourceTree = "<group>"; };
 		A9BA5DC31FABFF0400D07310 /* HeatChat.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = HeatChat.entitlements; sourceTree = "<group>"; };
+		A9D197431FC2676E0082CC64 /* UserLocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserLocationManager.swift; sourceTree = "<group>"; };
 		ACD4809BB410A079765D8D5C /* Pods_HeatChatTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_HeatChatTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CE28DF66FD250F9D3F04E9B1 /* Pods-HeatChat.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HeatChat.release.xcconfig"; path = "Pods/Target Support Files/Pods-HeatChat/Pods-HeatChat.release.xcconfig"; sourceTree = "<group>"; };
 		D14FB28D3DA27115C3517BDB /* Pods-HeatChatTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HeatChatTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-HeatChatTests/Pods-HeatChatTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -142,13 +144,12 @@
 		A962F3EB1FA802C40097935A /* HeatChat */ = {
 			isa = PBXGroup;
 			children = (
+				A9D197421FC267320082CC64 /* Supporting Files */,
 				A9BA5DC31FABFF0400D07310 /* HeatChat.entitlements */,
 				A92A24D51FA83C7000400912 /* Models */,
-				A962F3EC1FA802C40097935A /* AppDelegate.swift */,
 				A962F3EE1FA802C40097935A /* HeatChatVC.swift */,
 				A962F3F01FA802C40097935A /* Main.storyboard */,
 				A962F3F61FA802C40097935A /* Assets.xcassets */,
-				A962F3F81FA802C40097935A /* LaunchScreen.storyboard */,
 				A962F3FB1FA802C40097935A /* Info.plist */,
 				A962F3F31FA802C40097935A /* HeatChat.xcdatamodeld */,
 				A962F41F1FA806410097935A /* GoogleService-Info.plist */,
@@ -172,6 +173,16 @@
 				A962F4111FA802C40097935A /* Info.plist */,
 			);
 			path = HeatChatUITests;
+			sourceTree = "<group>";
+		};
+		A9D197421FC267320082CC64 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				A962F3EC1FA802C40097935A /* AppDelegate.swift */,
+				A962F3F81FA802C40097935A /* LaunchScreen.storyboard */,
+				A9D197431FC2676E0082CC64 /* UserLocationManager.swift */,
+			);
+			path = "Supporting Files";
 			sourceTree = "<group>";
 		};
 		F65A815175F45A79B9CA2ECB /* Pods */ = {
@@ -511,6 +522,7 @@
 				A92A24D71FA83C7C00400912 /* Chat.swift in Sources */,
 				A962F3ED1FA802C40097935A /* AppDelegate.swift in Sources */,
 				A962F3F51FA802C40097935A /* HeatChat.xcdatamodeld in Sources */,
+				A9D197441FC2676E0082CC64 /* UserLocationManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

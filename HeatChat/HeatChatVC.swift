@@ -100,20 +100,23 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
             let userLocation = CLLocation(latitude: defaults.double(forKey: "userLat"), longitude: defaults.double(forKey: "userLon"))
             let schoolLocation = CLLocation(latitude: selectedUni.lat, longitude: selectedUni.lon)
             let distance = userLocation.distance(from: schoolLocation) // in metres
-            
-            if distance > 30000 {
-                chatBox.layer.borderColor = UIColor.gray.cgColor
-                chatBox.isEditable = false
-                chatBox.text = "Too far away to post!"
-                sendButton.isEnabled = false
-
-            }else {
-                chatBox.layer.borderColor = UIColor.black.cgColor
-                chatBox.isEditable = true
-                chatBox.text = "Add a message.."
-                sendButton.isEnabled = true
-            }
-        }
+			
+			if CLLocationManager.authorizationStatus() != .authorizedWhenInUse {
+				chatBox.text = "Turn on location to post!"
+			} else {
+				if distance > 30000 {
+					chatBox.layer.borderColor = UIColor.gray.cgColor
+					chatBox.isEditable = false
+					chatBox.text = "Too far away to post!"
+					sendButton.isEnabled = false
+				} else {
+					chatBox.layer.borderColor = UIColor.black.cgColor
+					chatBox.isEditable = true
+					chatBox.text = "Add a message.."
+					sendButton.isEnabled = true
+				}
+			}
+		}
     }
     
     private func animateSideBar(_ sidebar: UIView) {
@@ -326,6 +329,7 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
             defaults.set(coordinates.latitude, forKey: "userLat")
             defaults.set(coordinates.longitude, forKey: "userLon")
         }
+		setupChatBar()
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
