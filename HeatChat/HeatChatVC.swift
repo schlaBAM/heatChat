@@ -30,13 +30,13 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
     private var schools = [School]()
     private var yHeight: CGFloat = 0.0
     private var ref = DatabaseReference()
-	let userLocationManager = UserLocationManager.sharedManager
+    let userLocationManager = UserLocationManager.sharedManager
 
 
     override func viewDidLoad() {
         super.viewDidLoad()
-		
-		userLocationManager.delegate = self
+        
+        userLocationManager.delegate = self
 
         navigationController?.navigationBar.barTintColor = UIColor(red: 0.3922, green: 0.5843, blue: 0.9294, alpha: 1.0) /* #6495ed */
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedStringKey.foregroundColor: UIColor.white]
@@ -56,9 +56,9 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
     override func viewWillDisappear(_ animated: Bool) {
         NotificationCenter.default.removeObserver(self, name: Notification.Name.UIKeyboardWillShow, object: nil)
         NotificationCenter.default.removeObserver(self, name: Notification.Name.UIKeyboardWillHide, object: nil)
-		if chatBox.isFirstResponder {
-			chatBox.resignFirstResponder()
-		}
+        if chatBox.isFirstResponder {
+            chatBox.resignFirstResponder()
+        }
     }
     
     private func setupNotifications() {
@@ -102,30 +102,31 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
             let schoolLocation = CLLocation(latitude: selectedUni.lat, longitude: selectedUni.lon)
             let distance = userLocation.distance(from: schoolLocation) // in metres
 			
-			if CLLocationManager.authorizationStatus() != .authorizedWhenInUse {
-				chatBox.text = "Turn on location to post!"
-			} else {
-				if distance > 30000 {
-					chatBox.layer.borderColor = UIColor.gray.cgColor
-					chatBox.isEditable = false
-					chatBox.text = "Too far away to post!"
-					sendButton.isEnabled = false
-				} else {
-					chatBox.layer.borderColor = UIColor.black.cgColor
-					chatBox.isEditable = true
-					chatBox.text = "Add a message.."
-					sendButton.isEnabled = true
-				}
-			}
-		}
+			chatBox.layer.borderColor = UIColor.gray.cgColor
+			chatBox.isEditable = false
+			sendButton.isEnabled = false
+            
+            if CLLocationManager.authorizationStatus() != .authorizedWhenInUse {
+                chatBox.text = "Turn on location to post!"
+            } else {
+                if distance > 30000 {
+                    chatBox.text = "Too far away to post!"
+                } else {
+                    chatBox.layer.borderColor = UIColor.black.cgColor
+                    chatBox.isEditable = true
+                    chatBox.text = "Add a message.."
+                    sendButton.isEnabled = true
+                }
+            }
+        }
     }
     
     private func animateSideBar(_ sidebar: UIView) {
         
         if sidebar.center.x < 0 {
-			UIView.animate(withDuration: 0.3, delay: 0, usingSpringWithDamping: 0.7, initialSpringVelocity: 1, options: UIViewAnimationOptions.curveEaseInOut, animations: {
-					sidebar.center.x += self.view.bounds.width * 0.5
-			})
+            UIView.animate(withDuration: 0.3, delay: 0, usingSpringWithDamping: 0.7, initialSpringVelocity: 1, options: UIViewAnimationOptions.curveEaseInOut, animations: {
+                    sidebar.center.x += self.view.bounds.width * 0.5
+            })
 //            UIView.animate(withDuration: 0.3, delay: 0, options: UIViewAnimationOptions.curveEaseInOut, animations: {
 //                sidebar.center.x += self.view.bounds.width * 0.5
 //            })
@@ -186,21 +187,21 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
         var textLabel = UITextView(frame: CGRect(x: view.bounds.width * 0.025, y: yHeight, width: view.bounds.width * 0.65, height: view.bounds.height * 0.125))
         textLabel.backgroundColor = .white
         textLabel.text = chatMessage.text
-		textLabel.font = UIFont.systemFont(ofSize: 14)
-		textLabel.textColor = #colorLiteral(red: 0.3764705882, green: 0.462745098, blue: 0.9882352941, alpha: 1)
+        textLabel.font = UIFont.systemFont(ofSize: 14)
+        textLabel.textColor = #colorLiteral(red: 0.3764705882, green: 0.462745098, blue: 0.9882352941, alpha: 1)
         textLabel.sizeToFit()
         
         if defaults.string(forKey: "userID") == chatMessage.uid {
             textLabel = UITextView(frame: CGRect(x: view.bounds.width * 0.5, y: yHeight, width: view.bounds.width * 0.65, height: view.bounds.height * 0.125))
             textLabel.backgroundColor = UIColor(red: 0.3922, green: 0.5843, blue: 0.9294, alpha: 1.0) /* #6495ed */
-			textLabel.font = UIFont.systemFont(ofSize: 14)
+            textLabel.font = UIFont.systemFont(ofSize: 14)
             textLabel.textColor = .white
             textLabel.text = chatMessage.text
             textLabel.sizeToFit()
             textLabel.center.x = messageView.bounds.width*0.975 - textLabel.bounds.width * 0.5
         }
-		
-		textLabel.clipsToBounds = false
+        
+        textLabel.clipsToBounds = false
         textLabel.layer.shadowColor = UIColor.gray.cgColor
         textLabel.layer.shadowOffset = CGSize(width: 1, height: 1)
         textLabel.layer.shadowOpacity = 1.0
@@ -248,7 +249,7 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
         if chatBox.text == "" {
             chatBox.text = "Add a message.."
         }
-		
+        
     }
     
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
@@ -262,7 +263,7 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
     @IBAction private func sendTapped(_ sender: Any) {
         let message = ["lat" : defaults.double(forKey: "userLat"), "lon" : defaults.double(forKey: "userLon"), "text" : chatBox.text, "time" : Int64(NSDate().timeIntervalSince1970 * 1000.0), "uid" : defaults.string(forKey: "userID")!] as [String : Any]
         if let selectedUni = selectedUni {
-			//temporary until I fix placeholder issues.
+            //temporary until I fix placeholder issues.
             if chatBox.text != "" && chatBox.text != "Add a message.." {
                 ref.child("schoolMessages").child(selectedUni.path).child("messages").childByAutoId().setValue(message)
                 chatBox.text.removeAll()
@@ -324,14 +325,9 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
             CLLocationManager().startUpdatingLocation()
         }
     }
-	
-	func userDidUpdateLocationStatus() {
-		setupChatBar()
-	}
-	
-	func userDidChangeAuthStatus() {
-		setupChatBar()
-	}
     
+    func userDidUpdateLocationStatus() {
+        setupChatBar()
+    }
 }
 
