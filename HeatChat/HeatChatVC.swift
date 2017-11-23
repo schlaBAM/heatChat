@@ -22,11 +22,14 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
     
     let appDel = UIApplication.shared.delegate as! AppDelegate
     let defaults = UserDefaults.standard
-    
+	
     var messages = [Message]()
     var messageViews = [UIView]()
     var sideBar = UITableView()
     var selectedUni : School?
+	
+	private var noMessagesLabel : NoMessagesView?
+	private var titleLabel = UILabel()
     private var schools = [School]()
     private var yHeight: CGFloat = 0.0
     private var ref = DatabaseReference()
@@ -72,7 +75,17 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
         
         let navHeight = self.navigationController!.navigationBar.frame.height
         yHeight = navHeight * 1.05
-        
+		
+		titleLabel.backgroundColor = UIColor.clear
+		titleLabel.numberOfLines = 1
+		titleLabel.textAlignment = .center
+		titleLabel.font = UIFont.boldSystemFont(ofSize: 16)
+		titleLabel.textColor = .white
+		titleLabel.text = "Work you fucker"
+		titleLabel.adjustsFontSizeToFitWidth = true
+		titleLabel.sizeToFit()
+		navigationItem.title = "Heatchat"
+		
         sideBar = UITableView(frame: CGRect(x: 0 - view.bounds.width * 0.5, y: self.navigationController!.navigationBar.frame.height * 1.45, width: view.bounds.width * 0.5, height: view.bounds.height - navHeight * 1.5 ))
         sideBar.delegate = self
         sideBar.dataSource = self
@@ -109,7 +122,7 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
             if CLLocationManager.authorizationStatus() != .authorizedWhenInUse {
                 chatBox.text = "Turn on location to post!"
             } else {
-                if distance > 30000 {
+                if distance > Double(selectedUni.radius * 1000) {
                     chatBox.text = "Too far away to post!"
                 } else {
                     chatBox.layer.borderColor = UIColor.black.cgColor
@@ -122,7 +135,8 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
     }
     
     private func animateSideBar(_ sidebar: UIView) {
-        
+		
+		view.bringSubview(toFront: sidebar)
         if sidebar.center.x < 0 {
             UIView.animate(withDuration: 0.3, delay: 0, usingSpringWithDamping: 0.7, initialSpringVelocity: 1, options: UIViewAnimationOptions.curveEaseInOut, animations: {
                     sidebar.center.x += self.view.bounds.width * 0.5
@@ -231,7 +245,13 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
         if let keyboardFrame: NSValue = notification.userInfo?[UIKeyboardFrameEndUserInfoKey] as? NSValue {
             
             let keyboardRect = keyboardFrame.cgRectValue
-            messageView.frame.origin.y -= keyboardRect.height
+			var contentInset = messageView.contentInset
+			contentInset.bottom = keyboardRect.height + chatView.bounds.height
+			messageView.contentInset = contentInset
+			
+			messageView.scrollRectToVisible((messageViews.last?.frame)!, animated: true)
+			
+//            messageView.frame.origin.y -= keyboardRect.height
             chatView.frame.origin.y -= keyboardRect.height
 
          }
@@ -241,7 +261,8 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
         if let keyboardFrame: NSValue = notification.userInfo?[UIKeyboardFrameEndUserInfoKey] as? NSValue {
             
             let keyboardRect = keyboardFrame.cgRectValue
-            messageView.frame.origin.y += keyboardRect.height
+//            messageView.frame.origin.y += keyboardRect.height
+			messageView.contentInset = UIEdgeInsets.zero
             chatView.frame.origin.y += keyboardRect.height
             
         }
@@ -287,20 +308,42 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
             messages.removeAll()
             messageViews.removeAll()
             messageView.subviews.forEach({$0.removeFromSuperview()})
-            
-            ref.child("schoolMessages").child(selectedUni!.path).child("messages").queryOrdered(byChild: "time").queryLimited(toLast: 100).observe(DataEventType.childAdded) { (data) in
-                guard let data = data.value as? [String : Any] else {return}
-                self.createChatMessage(data: data)
-            }
-            
-        }
-        
-        DispatchQueue.main.async {
-            self.navigationItem.title = "\(self.selectedUni!.name) Heatchat"
-            self.setupChatBar()
-        }
-        animateSideBar(sideBar)
-    }
+			
+			let path = ref.child("schoolMessages").child(selectedUni!.path).child("messages")
+			
+			path.observeSingleEvent(of: .value, with: { (snapshot) in
+				if snapshot.hasChildren() {
+					self.ref.child("schoolMessages").child(self.selectedUni!.path).child("messages").queryOrdered(byChild: "time").queryLimited(toLast: 100).observe(DataEventType.childAdded) { (data) in
+						
+						if data.hasChildren() {
+							guard let data = data.value as? [String : Any] else {return}
+							
+							if let noMessagesLabel = self.noMessagesLabel {
+								if noMessagesLabel.isDescendant(of: self.view) {
+									noMessagesLabel.removeFromSuperview()
+								}
+							}
+							
+							self.createChatMessage(data: data)
+							
+						}
+						
+					}
+					
+				} else {
+					self.checkForMessages()
+				}
+			})
+			
+			DispatchQueue.main.async {
+				self.titleLabel.text = "\(self.selectedUni!.name) Heatchat"
+				self.navigationItem.titleView = self.titleLabel
+				self.navigationItem.title = nil
+				self.setupChatBar()
+			}
+			animateSideBar(sideBar)
+    	}
+	}
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return schools.count
@@ -329,5 +372,28 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
     func userDidUpdateLocationStatus() {
         setupChatBar()
     }
+	
+	func checkForMessages() {
+		
+		if let noMessagesLabel = self.noMessagesLabel {
+			if noMessagesLabel.isDescendant(of: self.view) {
+				noMessagesLabel.removeFromSuperview()
+			}
+		}
+		
+		//TODO: clean up with setupChatbox.
+		if let selectedUni = selectedUni, messageViews.count == 0 {
+			let userLocation = CLLocation(latitude: defaults.double(forKey: "userLat"), longitude: defaults.double(forKey: "userLon"))
+			let schoolLocation = CLLocation(latitude: selectedUni.lat, longitude: selectedUni.lon)
+			let distance = userLocation.distance(from: schoolLocation) // in metres
+			
+			if distance > Double(selectedUni.radius * 1000) {
+				noMessagesLabel = NoMessagesView(frame: view.frame, isClose: false)
+			} else {
+				noMessagesLabel = NoMessagesView(frame: view.frame, isClose: true)
+			}
+			view.addSubview(noMessagesLabel!)
+		}
+	}
 }
 

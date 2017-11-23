@@ -10,10 +10,10 @@ import UIKit
 
 class SideBarView: UITableView {
     
-    override init(frame: CGRect, style: UITableViewStyle) {
-        
-    }
-    
+//    override init(frame: CGRect, style: UITableViewStyle) {
+//
+//    }
+//
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

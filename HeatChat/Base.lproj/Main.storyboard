@@ -16,7 +16,7 @@
         </array>
     </customFonts>
     <scenes>
-        <!--Heatchat-->
+        <!--Heat ChatVC-->
         <scene sceneID="tne-QT-ifu">
             <objects>
                 <viewController id="BYZ-38-t0r" customClass="HeatChatVC" customModule="HeatChat" customModuleProvider="target" sceneMemberID="viewController">
@@ -105,7 +105,7 @@
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
-                    <navigationItem key="navigationItem" title="Heatchat" id="soO-HQ-eCU">
+                    <navigationItem key="navigationItem" id="soO-HQ-eCU">
                         <barButtonItem key="leftBarButtonItem" image="list" id="7bG-cr-Npm">
                             <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             <connections>

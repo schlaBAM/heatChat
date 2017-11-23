@@ -13,13 +13,15 @@ struct School {
     let lon : Double
     let name : String
     let path : String
+    let radius : Int
     
     init?(dict: [String:Any]){
         guard
             let lat = dict["lat"] as? Double,
             let lon = dict["lon"] as? Double,
             let name = dict["name"] as? String,
-            let path = dict["path"] as? String
+            let path = dict["path"] as? String,
+            let radius = dict["radius"] as? Int
             else {
                 print("Unable to generate school")
                 return nil
@@ -28,5 +30,6 @@ struct School {
         self.lon = lon
         self.name = name
         self.path = path
+        self.radius = radius
     }
 }
