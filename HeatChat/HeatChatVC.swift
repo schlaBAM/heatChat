@@ -13,7 +13,7 @@ import CoreLocation
 import Crashlytics
 
 @IBDesignable
-class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UITableViewDataSource, UserLocationManagerDelegate{
+class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UITableViewDataSource, UserLocationManagerDelegate, UIActionSheetDelegate{
 
     @IBOutlet weak var messageView: UIScrollView!
     @IBOutlet weak var sendButton: UIButton!
@@ -48,7 +48,6 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
 
         loadUI()
         setupNotifications()
-        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -181,8 +180,12 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
             
             let textLabel = createTextView(chatMessage)
             let timeLabel = createTimeStamp(textLabel, chatMessage: chatMessage)
+			let tapHold = UILongPressGestureRecognizer(target: self, action: #selector(messageTapped(_:)))
+
             messageView.addSubview(textLabel)
             messageView.addSubview(timeLabel)
+			messageView.addGestureRecognizer(tapHold)
+			
             messageViews.append(textLabel)
             
             yHeight += textLabel.bounds.height + 10
@@ -198,7 +201,8 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
     
     private func createTextView(_ chatMessage : Chat) -> UITextView {
         //message from other user
-        var textLabel = UITextView(frame: CGRect(x: view.bounds.width * 0.025, y: yHeight, width: view.bounds.width * 0.65, height: view.bounds.height * 0.125))
+		var textLabel = MessageView(frame: CGRect(x: view.bounds.width * 0.025, y: yHeight, width: view.bounds.width * 0.65, height: view.bounds.height * 0.125), textContainer: NSTextContainer?.none, message: chatMessage)
+       // var textLabel = MessageView(frame: CGRect(x: view.bounds.width * 0.025, y: yHeight, width: view.bounds.width * 0.65, height: view.bounds.height * 0.125))
         textLabel.backgroundColor = .white
         textLabel.text = chatMessage.text
         textLabel.font = UIFont.systemFont(ofSize: 14)
@@ -206,7 +210,8 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
         textLabel.sizeToFit()
         
         if defaults.string(forKey: "userID") == chatMessage.uid {
-            textLabel = UITextView(frame: CGRect(x: view.bounds.width * 0.5, y: yHeight, width: view.bounds.width * 0.65, height: view.bounds.height * 0.125))
+//            textLabel = UITextView(frame: CGRect(x: view.bounds.width * 0.5, y: yHeight, width: view.bounds.width * 0.65, height: view.bounds.height * 0.125))
+			textLabel = MessageView(frame: CGRect(x: view.bounds.width * 0.025, y: yHeight, width: view.bounds.width * 0.65, height: view.bounds.height * 0.125), textContainer: NSTextContainer?.none, message: chatMessage)
             textLabel.backgroundColor = UIColor(red: 0.3922, green: 0.5843, blue: 0.9294, alpha: 1.0) /* #6495ed */
             textLabel.font = UIFont.systemFont(ofSize: 14)
             textLabel.textColor = .white
@@ -214,7 +219,7 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
             textLabel.sizeToFit()
             textLabel.center.x = messageView.bounds.width*0.975 - textLabel.bounds.width * 0.5
         }
-        
+		
         textLabel.clipsToBounds = false
         textLabel.layer.shadowColor = UIColor.gray.cgColor
         textLabel.layer.shadowOffset = CGSize(width: 1, height: 1)
@@ -239,6 +244,81 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
         
         return timeLabel
     }
+	
+	private func setupChatListener(_ index : Int){
+		
+		if selectedUni == nil || selectedUni!.path != schools[index].path {
+			if selectedUni != nil {
+				ref.child("schoolMessages").child(selectedUni!.path).child("messages").removeAllObservers()
+			}
+			selectedUni = schools[index]
+			messages.removeAll()
+			messageViews.removeAll()
+			messageView.subviews.forEach({$0.removeFromSuperview()})
+			
+			let path = ref.child("schoolMessages").child(selectedUni!.path).child("messages")
+			
+			path.observeSingleEvent(of: .value, with: { (snapshot) in
+				if snapshot.hasChildren() {
+					self.ref.child("schoolMessages").child(self.selectedUni!.path).child("messages").queryOrdered(byChild: "time").queryLimited(toLast: 100).observe(DataEventType.childAdded) { (data) in
+						
+						if data.hasChildren() {
+							guard let data = data.value as? [String : Any] else {return}
+							
+							if let noMessagesLabel = self.noMessagesLabel {
+								if noMessagesLabel.isDescendant(of: self.view) {
+									noMessagesLabel.removeFromSuperview()
+								}
+							}
+							
+							self.createChatMessage(data: data)
+							
+						}
+						
+					}
+					
+				} else {
+					self.checkForMessages()
+				}
+			})
+			
+			DispatchQueue.main.async {
+				self.titleLabel.text = "\(self.selectedUni!.name) Heatchat"
+				self.navigationItem.titleView = self.titleLabel
+				self.navigationItem.title = nil
+				self.setupChatBar()
+			}
+		}
+		animateSideBar(sideBar)
+	}
+	
+	@objc private func messageTapped(_ gesture : UILongPressGestureRecognizer){
+		
+		let actionSheet = UIAlertController(title: "Message Actions", message: "What would you like to do about this message?", preferredStyle: UIAlertControllerStyle.actionSheet)
+		
+		let blockAction = UIAlertAction(title: "Block User", style: .default) { (action) in
+			//blockUser()
+		}
+		actionSheet.addAction(blockAction)
+		
+		let flagAction = UIAlertAction(title: "Flag Comment", style: .default) { (action) in
+			//flag comment ID
+			//notify user comment has been sent to admin for moderation and will be resolved within 24 hours
+			//remove comment, adjust messageView by comment.height
+		}
+		actionSheet.addAction(flagAction)
+		
+		let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { (action) in
+		}
+		actionSheet.addAction(cancelAction)
+		
+		self.present(actionSheet, animated: true) {
+			
+		}
+		
+	}
+	
+	private func blockUser(){}
     
     @objc private func keyboardIsShowing(_ notification : Notification) {
         chatBox.text = ""
@@ -299,50 +379,9 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         //clear messageView, load messages, dismiss sidebar
         tableView.deselectRow(at: indexPath, animated: true)
-    
-        if selectedUni == nil || selectedUni!.path != schools[indexPath.row].path {
-            if selectedUni != nil {
-                ref.child("schoolMessages").child(selectedUni!.path).child("messages").removeAllObservers()
-            }
-            selectedUni = schools[indexPath.row]
-            messages.removeAll()
-            messageViews.removeAll()
-            messageView.subviews.forEach({$0.removeFromSuperview()})
-			
-			let path = ref.child("schoolMessages").child(selectedUni!.path).child("messages")
-			
-			path.observeSingleEvent(of: .value, with: { (snapshot) in
-				if snapshot.hasChildren() {
-					self.ref.child("schoolMessages").child(self.selectedUni!.path).child("messages").queryOrdered(byChild: "time").queryLimited(toLast: 100).observe(DataEventType.childAdded) { (data) in
-						
-						if data.hasChildren() {
-							guard let data = data.value as? [String : Any] else {return}
-							
-							if let noMessagesLabel = self.noMessagesLabel {
-								if noMessagesLabel.isDescendant(of: self.view) {
-									noMessagesLabel.removeFromSuperview()
-								}
-							}
-							
-							self.createChatMessage(data: data)
-							
-						}
-						
-					}
-					
-				} else {
-					self.checkForMessages()
-				}
-			})
-			
-			DispatchQueue.main.async {
-				self.titleLabel.text = "\(self.selectedUni!.name) Heatchat"
-				self.navigationItem.titleView = self.titleLabel
-				self.navigationItem.title = nil
-				self.setupChatBar()
-			}
-			animateSideBar(sideBar)
-    	}
+		
+		setupChatListener(indexPath.row)
+
 	}
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -395,5 +434,9 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
 			view.addSubview(noMessagesLabel!)
 		}
 	}
+}
+
+extension UITextView {
+	
 }
 
