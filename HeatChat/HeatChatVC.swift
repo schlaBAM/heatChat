@@ -172,19 +172,19 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
         sideBar.reloadData()
     }
     
-    private func createChatMessage(data : [String : Any]) {
+	private func createChatMessage(data : [String : Any], key : String) {
         
         let chatMessage = Chat(data: data)
         
         if let chatMessage = chatMessage {
             
             let textLabel = createTextView(chatMessage)
+			textLabel.keyTag = key
             let timeLabel = createTimeStamp(textLabel, chatMessage: chatMessage)
-			let tapHold = UILongPressGestureRecognizer(target: self, action: #selector(messageTapped(_:)))
-
+		
             messageView.addSubview(textLabel)
             messageView.addSubview(timeLabel)
-			messageView.addGestureRecognizer(tapHold)
+			
 			
             messageViews.append(textLabel)
             
@@ -199,9 +199,9 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
         }
     }
     
-    private func createTextView(_ chatMessage : Chat) -> UITextView {
+    private func createTextView(_ chatMessage : Chat) -> MessageView {
         //message from other user
-		var textLabel = MessageView(frame: CGRect(x: view.bounds.width * 0.025, y: yHeight, width: view.bounds.width * 0.65, height: view.bounds.height * 0.125), textContainer: NSTextContainer?.none, message: chatMessage)
+		var textLabel = MessageView(frame: CGRect(x: view.bounds.width * 0.025, y: yHeight, width: view.bounds.width * 0.65, height: view.bounds.height * 0.125), textContainer: NSTextContainer?.none, tag: "hello", message: chatMessage)
        // var textLabel = MessageView(frame: CGRect(x: view.bounds.width * 0.025, y: yHeight, width: view.bounds.width * 0.65, height: view.bounds.height * 0.125))
         textLabel.backgroundColor = .white
         textLabel.text = chatMessage.text
@@ -211,7 +211,7 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
         
         if defaults.string(forKey: "userID") == chatMessage.uid {
 //            textLabel = UITextView(frame: CGRect(x: view.bounds.width * 0.5, y: yHeight, width: view.bounds.width * 0.65, height: view.bounds.height * 0.125))
-			textLabel = MessageView(frame: CGRect(x: view.bounds.width * 0.025, y: yHeight, width: view.bounds.width * 0.65, height: view.bounds.height * 0.125), textContainer: NSTextContainer?.none, message: chatMessage)
+			textLabel = MessageView(frame: CGRect(x: view.bounds.width * 0.025, y: yHeight, width: view.bounds.width * 0.65, height: view.bounds.height * 0.125), textContainer: NSTextContainer?.none, tag: "hellosss", message: chatMessage)
             textLabel.backgroundColor = UIColor(red: 0.3922, green: 0.5843, blue: 0.9294, alpha: 1.0) /* #6495ed */
             textLabel.font = UIFont.systemFont(ofSize: 14)
             textLabel.textColor = .white
@@ -225,7 +225,13 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
         textLabel.layer.shadowOffset = CGSize(width: 1, height: 1)
         textLabel.layer.shadowOpacity = 1.0
         textLabel.layer.cornerRadius = 10
-        textLabel.isUserInteractionEnabled = false
+        textLabel.isUserInteractionEnabled = true
+		textLabel.isEditable = false
+		textLabel.isScrollEnabled = false
+		textLabel.message = chatMessage
+		
+		let tapHold = UILongPressGestureRecognizer(target: self, action: #selector(messageTapped(_:)))
+		textLabel.addGestureRecognizer(tapHold)
         return textLabel
     }
     
@@ -263,6 +269,7 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
 					self.ref.child("schoolMessages").child(self.selectedUni!.path).child("messages").queryOrdered(byChild: "time").queryLimited(toLast: 100).observe(DataEventType.childAdded) { (data) in
 						
 						if data.hasChildren() {
+							guard let key = data.key as? String else {return}
 							guard let data = data.value as? [String : Any] else {return}
 							
 							if let noMessagesLabel = self.noMessagesLabel {
@@ -270,13 +277,9 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
 									noMessagesLabel.removeFromSuperview()
 								}
 							}
-							
-							self.createChatMessage(data: data)
-							
+							self.createChatMessage(data: data, key: key)
 						}
-						
 					}
-					
 				} else {
 					self.checkForMessages()
 				}
@@ -294,15 +297,19 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
 	
 	@objc private func messageTapped(_ gesture : UILongPressGestureRecognizer){
 		
+		let view = (gesture.view as! MessageView)
+		let key = view.keyTag
+		let uid = view.message.uid
+		
 		let actionSheet = UIAlertController(title: "Message Actions", message: "What would you like to do about this message?", preferredStyle: UIAlertControllerStyle.actionSheet)
 		
 		let blockAction = UIAlertAction(title: "Block User", style: .default) { (action) in
-			//blockUser()
+			self.blockUser(uid)
 		}
 		actionSheet.addAction(blockAction)
 		
 		let flagAction = UIAlertAction(title: "Flag Comment", style: .default) { (action) in
-			//flag comment ID
+			//flag comment ID - key
 			//notify user comment has been sent to admin for moderation and will be resolved within 24 hours
 			//remove comment, adjust messageView by comment.height
 		}
@@ -318,7 +325,10 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
 		
 	}
 	
-	private func blockUser(){}
+	private func blockUser(_ uid : String){
+		//TODO: add user to defaults dictionary with key = blockedUsers
+		print(uid)
+	}
     
     @objc private func keyboardIsShowing(_ notification : Notification) {
         chatBox.text = ""

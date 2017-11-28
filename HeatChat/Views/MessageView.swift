@@ -11,14 +11,21 @@ import UIKit
 class MessageView: UITextView {
 
     var keyTag : String!
+    var message : Chat!
     
-    init(frame: CGRect, textContainer: NSTextContainer?, tag : String){
+    init(frame: CGRect, textContainer: NSTextContainer?, tag : String, message : Chat){
         super.init(frame: frame, textContainer: textContainer)
         self.keyTag = tag
+        self.message = message
+        setupView()
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    private func setupView(){
+        
     }
     /*
     // Only override draw() if you perform custom drawing.
