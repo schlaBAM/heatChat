@@ -218,7 +218,10 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
             textLabel.text = chatMessage.text
             textLabel.sizeToFit()
             textLabel.center.x = messageView.bounds.width*0.975 - textLabel.bounds.width * 0.5
-        }
+		} else {
+			let tapHold = UILongPressGestureRecognizer(target: self, action: #selector(messageTapped(_:)))
+			textLabel.addGestureRecognizer(tapHold)
+		}
 		
         textLabel.clipsToBounds = false
         textLabel.layer.shadowColor = UIColor.gray.cgColor
@@ -230,8 +233,6 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
 		textLabel.isScrollEnabled = false
 		textLabel.message = chatMessage
 		
-		let tapHold = UILongPressGestureRecognizer(target: self, action: #selector(messageTapped(_:)))
-		textLabel.addGestureRecognizer(tapHold)
         return textLabel
     }
     
@@ -265,25 +266,25 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
 			let path = ref.child("schoolMessages").child(selectedUni!.path).child("messages")
 			
 			path.observeSingleEvent(of: .value, with: { (snapshot) in
-				if snapshot.hasChildren() {
-					self.ref.child("schoolMessages").child(self.selectedUni!.path).child("messages").queryOrdered(byChild: "time").queryLimited(toLast: 100).observe(DataEventType.childAdded) { (data) in
-						
-						if data.hasChildren() {
-							guard let key = data.key as? String else {return}
-							guard let data = data.value as? [String : Any] else {return}
-							
-							if let noMessagesLabel = self.noMessagesLabel {
-								if noMessagesLabel.isDescendant(of: self.view) {
-									noMessagesLabel.removeFromSuperview()
-								}
-							}
-							self.createChatMessage(data: data, key: key)
-						}
-					}
-				} else {
+				if !snapshot.hasChildren() {
 					self.checkForMessages()
 				}
 			})
+			
+			path.queryOrdered(byChild: "time").queryLimited(toLast: 100).observe(DataEventType.childAdded) { (data) in
+				
+				if data.hasChildren() {
+					let key = data.key
+					guard let data = data.value as? [String : Any] else {return}
+					
+					if let noMessagesLabel = self.noMessagesLabel {
+						if noMessagesLabel.isDescendant(of: self.view) {
+							noMessagesLabel.removeFromSuperview()
+						}
+					}
+					self.createChatMessage(data: data, key: key)
+				}
+			}
 			
 			DispatchQueue.main.async {
 				self.titleLabel.text = "\(self.selectedUni!.name) Heatchat"
@@ -326,20 +327,36 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
 	}
 	
 	private func blockUser(_ uid : String){
-		//TODO: add user to defaults dictionary with key = blockedUsers
-		print(uid)
+		
+		var blockedUsers = defaults.array(forKey: "blockedUsers")
+		if blockedUsers != nil {
+			blockedUsers!.append(uid)
+			defaults.set(blockedUsers, forKey: "blockedUsers")
+		} else {
+			defaults.set([uid], forKey: "blockedUsers")
+		}
+		
 	}
     
     @objc private func keyboardIsShowing(_ notification : Notification) {
         chatBox.text = ""
+		
+		view.bringSubview(toFront: chatBox)
+		view.bringSubview(toFront: sendButton)
+		
+		if let noMessagesLabel = noMessagesLabel {
+			view.sendSubview(toBack: noMessagesLabel)
+		}
         if let keyboardFrame: NSValue = notification.userInfo?[UIKeyboardFrameEndUserInfoKey] as? NSValue {
             
             let keyboardRect = keyboardFrame.cgRectValue
 			var contentInset = messageView.contentInset
-			contentInset.bottom = keyboardRect.height + chatView.bounds.height
+			contentInset.bottom = keyboardRect.height + chatView.frame.height
 			messageView.contentInset = contentInset
 			
-			messageView.scrollRectToVisible((messageViews.last?.frame)!, animated: true)
+			if messageViews.count > 0 {
+				messageView.scrollRectToVisible((messageViews.last?.frame)!, animated: true)
+			}
 			
 //            messageView.frame.origin.y -= keyboardRect.height
             chatView.frame.origin.y -= keyboardRect.height
@@ -437,16 +454,12 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
 			let distance = userLocation.distance(from: schoolLocation) // in metres
 			
 			if distance > Double(selectedUni.radius * 1000) {
-				noMessagesLabel = NoMessagesView(frame: view.frame, isClose: false)
+				noMessagesLabel = NoMessagesView(frame: messageView.frame, isClose: false)
 			} else {
-				noMessagesLabel = NoMessagesView(frame: view.frame, isClose: true)
+				noMessagesLabel = NoMessagesView(frame: messageView.frame, isClose: true)
 			}
 			view.addSubview(noMessagesLabel!)
 		}
 	}
-}
-
-extension UITextView {
-	
 }
 
