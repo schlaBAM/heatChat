@@ -67,6 +67,8 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardIsShowing(_:)), name: Notification.Name.UIKeyboardWillShow, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardIsHiding(_:)), name: Notification.Name.UIKeyboardWillHide, object: nil)
     }
+	
+	//MARK: UI
     
     fileprivate func loadUI() {
       
@@ -300,19 +302,17 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
 		
 		let view = (gesture.view as! MessageView)
 		let key = view.keyTag
-		let uid = view.message.uid
+		let message = view.message
 		
 		let actionSheet = UIAlertController(title: "Message Actions", message: "What would you like to do about this message?", preferredStyle: UIAlertControllerStyle.actionSheet)
 		
 		let blockAction = UIAlertAction(title: "Block User", style: .default) { (action) in
-			self.blockUser(uid)
+			self.blockUser(message!.uid)
 		}
 		actionSheet.addAction(blockAction)
 		
 		let flagAction = UIAlertAction(title: "Flag Comment", style: .default) { (action) in
-			//flag comment ID - key
-			//notify user comment has been sent to admin for moderation and will be resolved within 24 hours
-			//remove comment, adjust messageView by comment.height
+			self.flagComment(key!, message!.text) //key isn't optional but whatever xcode
 		}
 		actionSheet.addAction(flagAction)
 		
@@ -320,10 +320,22 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
 		}
 		actionSheet.addAction(cancelAction)
 		
-		self.present(actionSheet, animated: true) {
-			
-		}
+		self.present(actionSheet, animated: true)
 		
+	}
+	
+	private func flagComment(_ key : String, _ message: String) {
+		
+		if let selectedUni = selectedUni {
+			let report = ["messageKey" : key, "message" : message]
+			ref.child("reports").child(selectedUni.path).setValue(report)
+			
+			let alert = UIAlertController(title: "Message Reported", message: "Comment has been sent to admin for moderation. This issue will be resolved within 24 hours.", preferredStyle: .alert)
+			self.present(alert, animated: true)
+		}
+	
+		//TODO: remove comment, adjust messageView by comment.height
+
 	}
 	
 	private func blockUser(_ uid : String){
@@ -336,7 +348,11 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
 			defaults.set([uid], forKey: "blockedUsers")
 		}
 		
+		//TODO: refresh messageView without blocked user's messages.
+		
 	}
+	
+	//MARK: Messaging
     
     @objc private func keyboardIsShowing(_ notification : Notification) {
         chatBox.text = ""
@@ -399,6 +415,31 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
             }
         }
     }
+	
+	func checkForMessages() {
+		
+		if let noMessagesLabel = self.noMessagesLabel {
+			if noMessagesLabel.isDescendant(of: self.view) {
+				noMessagesLabel.removeFromSuperview()
+			}
+		}
+		
+		//TODO: clean up with setupChatbox.
+		if let selectedUni = selectedUni, messageViews.count == 0 {
+			let userLocation = CLLocation(latitude: defaults.double(forKey: "userLat"), longitude: defaults.double(forKey: "userLon"))
+			let schoolLocation = CLLocation(latitude: selectedUni.lat, longitude: selectedUni.lon)
+			let distance = userLocation.distance(from: schoolLocation) // in metres
+			
+			if distance > Double(selectedUni.radius * 1000) {
+				noMessagesLabel = NoMessagesView(frame: messageView.frame, isClose: false)
+			} else {
+				noMessagesLabel = NoMessagesView(frame: messageView.frame, isClose: true)
+			}
+			view.addSubview(noMessagesLabel!)
+		}
+	}
+	
+	//MARK: Sidebar + Location
 
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         return "Select School"
@@ -438,28 +479,5 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
     func userDidUpdateLocationStatus() {
         setupChatBar()
     }
-	
-	func checkForMessages() {
-		
-		if let noMessagesLabel = self.noMessagesLabel {
-			if noMessagesLabel.isDescendant(of: self.view) {
-				noMessagesLabel.removeFromSuperview()
-			}
-		}
-		
-		//TODO: clean up with setupChatbox.
-		if let selectedUni = selectedUni, messageViews.count == 0 {
-			let userLocation = CLLocation(latitude: defaults.double(forKey: "userLat"), longitude: defaults.double(forKey: "userLon"))
-			let schoolLocation = CLLocation(latitude: selectedUni.lat, longitude: selectedUni.lon)
-			let distance = userLocation.distance(from: schoolLocation) // in metres
-			
-			if distance > Double(selectedUni.radius * 1000) {
-				noMessagesLabel = NoMessagesView(frame: messageView.frame, isClose: false)
-			} else {
-				noMessagesLabel = NoMessagesView(frame: messageView.frame, isClose: true)
-			}
-			view.addSubview(noMessagesLabel!)
-		}
-	}
 }
 
