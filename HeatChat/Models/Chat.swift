@@ -8,6 +8,8 @@
 
 import Foundation
 
+let filteredWords = ["fuck", "shit", "nigger", "ass", "bitch", "cunt", "slut", "whore", "fag", "retard", "rape", "chink"]
+
 struct Chat {
 
     var text : String
@@ -34,12 +36,21 @@ struct Chat {
             self.lon = lon
             self.time = time
         
+        if let filterEnabled = UserDefaults.standard.bool(forKey: "filterEnabled") as? Bool, filterEnabled, containsSwearWord(text: text, filteredWords: filteredWords) {
+                return nil
+            }
+        
             if let blockedUsers = UserDefaults.standard.stringArray(forKey: "blockedUsers") {
                 if blockedUsers.contains(where: {$0 == uid}) {
                     print("\(uid) is blocked")
                     return nil
                 }
             }
+        }
+    
+        func containsSwearWord(text : String, filteredWords : [String]) -> Bool{
+            return filteredWords
+                .reduce(false) { $0 || text.contains($1.lowercased()) }
         }
     }
 

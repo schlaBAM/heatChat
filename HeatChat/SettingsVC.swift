@@ -12,7 +12,7 @@ import UIKit
 class SettingsVC : UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     @IBOutlet weak var tableView: UITableView!
-    let filteredWords = ["fuck", "shit", "nigger", "ass", "bitch", "cunt", "slut", "whore", "fag", "retard", "rape", "chink"]
+
     override func viewDidLoad() {
         
         super.viewDidLoad()
