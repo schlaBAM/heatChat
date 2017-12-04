@@ -231,6 +231,7 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
         textLabel.layer.shadowOpacity = 1.0
         textLabel.layer.cornerRadius = 10
         textLabel.isUserInteractionEnabled = true
+		textLabel.isSelectable = false
 		textLabel.isEditable = false
 		textLabel.isScrollEnabled = false
 		textLabel.message = chatMessage
@@ -328,9 +329,12 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
 		
 		if let selectedUni = selectedUni {
 			let report = ["messageKey" : key, "message" : message]
-			ref.child("reports").child(selectedUni.path).setValue(report)
+			ref.child("reports").child(selectedUni.path).childByAutoId().setValue(report)
 			
 			let alert = UIAlertController(title: "Message Reported", message: "Comment has been sent to admin for moderation. This issue will be resolved within 24 hours.", preferredStyle: .alert)
+			
+			let alertButton = UIAlertAction(title: "OK", style: .cancel)
+			alert.addAction(alertButton)
 			self.present(alert, animated: true)
 		}
 	
