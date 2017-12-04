@@ -89,7 +89,7 @@
                                 <gestureRecognizers/>
                                 <constraints>
                                     <constraint firstAttribute="trailing" secondItem="AC0-gj-Tnr" secondAttribute="trailing" id="52O-Hy-Ly7"/>
-                                    <constraint firstItem="AC0-gj-Tnr" firstAttribute="top" secondItem="PXQ-CK-RIK" secondAttribute="top" id="AQc-W0-Hce"/>
+                                    <constraint firstItem="AC0-gj-Tnr" firstAttribute="top" secondItem="m2m-ws-0F9" secondAttribute="top" id="AQc-W0-Hce"/>
                                     <constraint firstItem="AC0-gj-Tnr" firstAttribute="leading" secondItem="PXQ-CK-RIK" secondAttribute="leading" id="HXP-Md-5VR"/>
                                 </constraints>
                                 <viewLayoutGuide key="safeArea" id="m2m-ws-0F9"/>

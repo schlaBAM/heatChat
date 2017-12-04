@@ -45,6 +45,8 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedStringKey.foregroundColor: UIColor.white]
 
         ref = Database.database().reference()
+		
+		defaults.removeObject(forKey: "blockedUsers")
 
         loadUI()
         setupNotifications()
@@ -255,9 +257,9 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
         return timeLabel
     }
 	
-	private func setupChatListener(_ index : Int){
+	private func setupChatListener(_ index : Int, blockedUpdate : Bool = false){
 		
-		if selectedUni == nil || selectedUni!.path != schools[index].path {
+		if selectedUni == nil || selectedUni!.path != schools[index].path || blockedUpdate {
 			if selectedUni != nil {
 				ref.child("schoolMessages").child(selectedUni!.path).child("messages").removeAllObservers()
 			}
@@ -296,7 +298,9 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
 				self.setupChatBar()
 			}
 		}
-		animateSideBar(sideBar)
+		if !blockedUpdate {
+			animateSideBar(sideBar)
+		}
 	}
 	
 	@objc private func messageTapped(_ gesture : UILongPressGestureRecognizer){
@@ -344,15 +348,34 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
 	
 	private func blockUser(_ uid : String){
 		
-		var blockedUsers = defaults.array(forKey: "blockedUsers")
-		if blockedUsers != nil {
-			blockedUsers!.append(uid)
+		if var blockedUsers = defaults.stringArray(forKey: "blockedUsers"){
+			blockedUsers.append(uid)
 			defaults.set(blockedUsers, forKey: "blockedUsers")
 		} else {
 			defaults.set([uid], forKey: "blockedUsers")
 		}
 		
-		//TODO: refresh messageView without blocked user's messages.
+		if let index = schools.index(where: {$0.name == selectedUni!.name}) {
+			let blockedNotification = UIView(frame: CGRect(x: messageView.bounds.width*0.05, y: messageView.bounds.height * 0.15, width: messageView.bounds.width * 0.9, height: messageView.bounds.height*0.075))
+			blockedNotification.backgroundColor = UIColor.black
+			blockedNotification.alpha = 0.9
+			blockedNotification.layer.cornerRadius = 5
+			
+			let blockedLabel = UILabel(frame: CGRect(x: 0, y: 0, width: blockedNotification.bounds.width, height: blockedNotification.bounds.height))
+			blockedLabel.text = "User has been blocked! You will no longer see their messages."
+			blockedLabel.textColor = UIColor.white
+			blockedLabel.font = UIFont.systemFont(ofSize: 15)
+//			blockedLabel.adjustsFontSizeToFitWidth = true
+			blockedLabel.textAlignment = .center
+			blockedNotification.addSubview(blockedLabel)
+			view.addSubview(blockedNotification)
+			
+			UIView.animate(withDuration: 0.5, delay: 3, options: UIViewAnimationOptions.curveEaseOut, animations: {
+				blockedNotification.alpha = 0.0
+			}, completion:nil)
+
+			setupChatListener(index, blockedUpdate: true)
+		}
 		
 	}
 	

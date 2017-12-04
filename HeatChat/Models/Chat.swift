@@ -16,8 +16,6 @@ struct Chat {
     var lon : Float
     var time : CLong
     
-    let blockedUsers = UserDefaults.standard.array(forKey: "blockedUsers")
-    
     init?(data : [String : Any]){
             guard
                 let text = data["text"] as? String,
@@ -36,15 +34,12 @@ struct Chat {
             self.lon = lon
             self.time = time
         
-        if let blockedUsers = blockedUsers as? [String] {
-            for user in blockedUsers{
-                if user == uid {
+            if let blockedUsers = UserDefaults.standard.stringArray(forKey: "blockedUsers") {
+                if blockedUsers.contains(where: {$0 == uid}) {
                     print("\(uid) is blocked")
                     return nil
                 }
             }
-        }
-            
         }
     }
 
