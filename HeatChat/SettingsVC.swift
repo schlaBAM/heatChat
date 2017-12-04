@@ -9,13 +9,23 @@
 import Foundation
 import UIKit
 
+class FilterWordsCustomCell : UITableViewCell {
+    
+    @IBOutlet weak var cellText: UILabel!
+    @IBOutlet weak var subText: UILabel!
+    @IBOutlet weak var cellSwitch: UISwitch!
+}
+
 class SettingsVC : UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     @IBOutlet weak var tableView: UITableView!
+    let defaults = UserDefaults.standard
 
     override func viewDidLoad() {
         
         super.viewDidLoad()
+        tableView.delegate = self
+        tableView.dataSource = self
     
     }
     
@@ -24,11 +34,21 @@ class SettingsVC : UIViewController, UITableViewDelegate, UITableViewDataSource 
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "filterCell")
-        return cell!
+        let cell = tableView.dequeueReusableCell(withIdentifier: "filterCell") as! FilterWordsCustomCell
+        if let filtered = defaults.bool(forKey: "filterEnabled") as? Bool, filtered {
+            cell.cellSwitch.isOn = true
+        } else {
+            cell.cellSwitch.isOn = false
+        }
+        return cell
     }
 
-    @IBAction func switchChanged(_ sender: Any) {
-        
+    @IBAction func switchToggled(_ sender: UISwitch!) {
+        if sender.isOn {
+            defaults.set(true, forKey: "filterEnabled")
+        } else {
+           defaults.set(false, forKey: "filterEnabled")
+        }
     }
+    
 }

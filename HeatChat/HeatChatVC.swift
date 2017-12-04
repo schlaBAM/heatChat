@@ -69,6 +69,18 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardIsHiding(_:)), name: Notification.Name.UIKeyboardWillHide, object: nil)
     }
 	
+	@IBAction func unwindFromSettingsVC(_ sender : UIStoryboardSegue) {
+		if sender.source is SettingsVC {
+			if let filtered = defaults.bool(forKey: "filterEnabled") as? Bool, filtered {
+				if selectedUni != nil {
+					
+				} else {
+					
+				}
+			}
+			
+		}
+	}
 	//MARK: UI
     
     fileprivate func loadUI() {

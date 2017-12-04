@@ -49,8 +49,7 @@ struct Chat {
         }
     
         func containsSwearWord(text : String, filteredWords : [String]) -> Bool{
-            return filteredWords
-                .reduce(false) { $0 || text.contains($1.lowercased()) }
+            return filteredWords.reduce(false) { $0 || text.lowercased().contains($1) }
         }
     }
 
