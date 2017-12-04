@@ -78,14 +78,14 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
         let navHeight = self.navigationController!.navigationBar.frame.height
         yHeight = navHeight * 1.05
 		
-		titleLabel.backgroundColor = UIColor.clear
-		titleLabel.numberOfLines = 1
-		titleLabel.textAlignment = .center
-		titleLabel.font = UIFont.boldSystemFont(ofSize: 16)
-		titleLabel.textColor = .white
-		titleLabel.text = "Work you fucker"
-		titleLabel.adjustsFontSizeToFitWidth = true
-		titleLabel.sizeToFit()
+//		titleLabel.backgroundColor = UIColor.clear
+//		titleLabel.numberOfLines = 1
+//		titleLabel.textAlignment = .center
+//		titleLabel.font = UIFont.boldSystemFont(ofSize: 16)
+//		titleLabel.textColor = .white
+//		titleLabel.text = "Work you fucker"
+//		titleLabel.adjustsFontSizeToFitWidth = true
+//		titleLabel.sizeToFit()
 		navigationItem.title = "Heatchat"
 		
         sideBar = UITableView(frame: CGRect(x: 0 - view.bounds.width * 0.5, y: self.navigationController!.navigationBar.frame.height * 1.45, width: view.bounds.width * 0.5, height: view.bounds.height - navHeight * 1.5 ))
@@ -291,9 +291,9 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
 			}
 			
 			DispatchQueue.main.async {
-				self.titleLabel.text = "\(self.selectedUni!.name) Heatchat"
-				self.navigationItem.titleView = self.titleLabel
-				self.navigationItem.title = nil
+//				self.titleLabel.text = "\(self.selectedUni!.name) Heatchat"
+//				self.navigationItem.titleView = self.titleLabel
+				self.navigationItem.title = "\(self.selectedUni!.name) Heatchat"
 				self.setupChatBar()
 			}
 		}

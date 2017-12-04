@@ -20,6 +20,7 @@
 		A962F4051FA802C40097935A /* HeatChatTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A962F4041FA802C40097935A /* HeatChatTests.swift */; };
 		A962F4101FA802C40097935A /* HeatChatUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A962F40F1FA802C40097935A /* HeatChatUITests.swift */; };
 		A962F4201FA806520097935A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A962F41F1FA806410097935A /* GoogleService-Info.plist */; };
+		A989432F1FD52602000D9881 /* SettingsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = A989432E1FD52602000D9881 /* SettingsVC.swift */; };
 		A9B52C121FB1845A006A4B33 /* School.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9B52C111FB1845A006A4B33 /* School.swift */; };
 		A9D197441FC2676E0082CC64 /* UserLocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9D197431FC2676E0082CC64 /* UserLocationManager.swift */; };
 		A9D197471FC2A33F0082CC64 /* SideBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9D197461FC2A33F0082CC64 /* SideBarView.swift */; };
@@ -67,6 +68,7 @@
 		A962F40F1FA802C40097935A /* HeatChatUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeatChatUITests.swift; sourceTree = "<group>"; };
 		A962F4111FA802C40097935A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A962F41F1FA806410097935A /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		A989432E1FD52602000D9881 /* SettingsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsVC.swift; sourceTree = "<group>"; };
 		A9B52C111FB1845A006A4B33 /* School.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = School.swift; sourceTree = "<group>"; };
 		A9BA5DC31FABFF0400D07310 /* HeatChat.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = HeatChat.entitlements; sourceTree = "<group>"; };
 		A9D197431FC2676E0082CC64 /* UserLocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserLocationManager.swift; sourceTree = "<group>"; };
@@ -154,6 +156,7 @@
 				A92A24D51FA83C7000400912 /* Models */,
 				A9D197451FC2A2680082CC64 /* Views */,
 				A962F3EE1FA802C40097935A /* HeatChatVC.swift */,
+				A989432E1FD52602000D9881 /* SettingsVC.swift */,
 				A962F3F01FA802C40097935A /* Main.storyboard */,
 				A9D197421FC267320082CC64 /* Supporting Files */,
 				A962F3F61FA802C40097935A /* Assets.xcassets */,
@@ -543,6 +546,7 @@
 				A9D197471FC2A33F0082CC64 /* SideBarView.swift in Sources */,
 				A9D197441FC2676E0082CC64 /* UserLocationManager.swift in Sources */,
 				A9D197491FC67F440082CC64 /* NoMessagesView.swift in Sources */,
+				A989432F1FD52602000D9881 /* SettingsVC.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -36,6 +36,9 @@
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="User blocked! You will no longer see their messages." textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xyE-00-Gd2">
                                                         <rect key="frame" x="6" y="12" width="402" height="21"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                        <accessibility key="accessibilityConfiguration">
+                                                            <bool key="isElement" value="NO"/>
+                                                        </accessibility>
                                                         <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                                         <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                         <nil key="highlightedColor"/>
@@ -140,6 +143,12 @@
                                 <action selector="universityIconTapped:" destination="BYZ-38-t0r" id="duj-AO-9oA"/>
                             </connections>
                         </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" title="Item" id="uUz-qx-zT1">
+                            <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <connections>
+                                <segue destination="rty-S4-YUd" kind="show" id="Dab-V3-Evz"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
                     <connections>
@@ -158,6 +167,72 @@
                 </tapGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="369.56521739130437" y="31.793478260869566"/>
+        </scene>
+        <!--Settings-->
+        <scene sceneID="csL-hQ-zXd">
+            <objects>
+                <viewController id="rty-S4-YUd" customClass="SettingsVC" customModule="HeatChat" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="lKv-Fi-lRK">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="tef-t7-xos">
+                                <rect key="frame" x="0.0" y="64" width="414" height="672"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <prototypes>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="filterCell" id="9yd-gM-iFs">
+                                        <rect key="frame" x="0.0" y="28" width="414" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="9yd-gM-iFs" id="691-sM-bZB">
+                                            <rect key="frame" x="0.0" y="0.0" width="414" height="43.666666666666664"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Filter Offensive Language" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="G9g-fM-lj9">
+                                                    <rect key="frame" x="10" y="12" width="297" height="21"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="LPt-GC-1D1">
+                                                    <rect key="frame" x="350" y="6" width="51" height="31"/>
+                                                    <connections>
+                                                        <action selector="switchChanged:" destination="rty-S4-YUd" eventType="valueChanged" id="CSC-eJ-ATE"/>
+                                                    </connections>
+                                                </switch>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstAttribute="trailing" secondItem="LPt-GC-1D1" secondAttribute="trailing" constant="15" id="DXY-dd-Exo"/>
+                                                <constraint firstItem="LPt-GC-1D1" firstAttribute="top" secondItem="691-sM-bZB" secondAttribute="top" constant="6" id="GVC-kY-0y9"/>
+                                                <constraint firstItem="G9g-fM-lj9" firstAttribute="centerY" secondItem="691-sM-bZB" secondAttribute="centerY" id="Waw-Zl-Bba"/>
+                                                <constraint firstAttribute="bottom" secondItem="LPt-GC-1D1" secondAttribute="bottom" constant="6.6699999999999999" id="X77-qA-jCB"/>
+                                                <constraint firstItem="LPt-GC-1D1" firstAttribute="leading" secondItem="G9g-fM-lj9" secondAttribute="trailing" constant="43" id="Zsu-ey-3Hb"/>
+                                                <constraint firstItem="G9g-fM-lj9" firstAttribute="leading" secondItem="691-sM-bZB" secondAttribute="leadingMargin" constant="-5" id="aMF-eX-jT8"/>
+                                                <constraint firstItem="LPt-GC-1D1" firstAttribute="centerY" secondItem="691-sM-bZB" secondAttribute="centerY" id="p5Y-cY-P48"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </prototypes>
+                            </tableView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="tef-t7-xos" firstAttribute="top" secondItem="6hi-gb-AxA" secondAttribute="top" id="QGH-b9-4Ep"/>
+                            <constraint firstItem="tef-t7-xos" firstAttribute="leading" secondItem="6hi-gb-AxA" secondAttribute="leading" id="UIl-p5-k9Y"/>
+                            <constraint firstItem="tef-t7-xos" firstAttribute="trailing" secondItem="6hi-gb-AxA" secondAttribute="trailing" id="Zln-4r-Bhr"/>
+                            <constraint firstItem="tef-t7-xos" firstAttribute="bottom" secondItem="6hi-gb-AxA" secondAttribute="bottom" id="m1J-Wk-zev"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="6hi-gb-AxA"/>
+                    </view>
+                    <navigationItem key="navigationItem" title="Settings" id="EZz-zQ-NTe">
+                        <barButtonItem key="backBarButtonItem" title="Back" id="qxu-nn-OPY"/>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="tableView" destination="tef-t7-xos" id="Ax9-if-ar7"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="0MT-IL-ygJ" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1460.8695652173915" y="37.5"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="bS2-Aw-9Vk">
@@ -181,4 +256,5 @@
     <resources>
         <image name="list" width="36" height="36"/>
     </resources>
+    <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
 </document>
