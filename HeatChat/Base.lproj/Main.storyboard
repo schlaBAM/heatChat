@@ -31,7 +31,7 @@
                                         <rect key="frame" x="0.0" y="0.0" width="414" height="625"/>
                                         <subviews>
                                             <view hidden="YES" alpha="0.80000000000000004" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="lXG-JX-cKj">
-                                                <rect key="frame" x="0.0" y="581" width="414" height="44"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="414" height="44"/>
                                                 <subviews>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="User blocked! You will no longer see their messages." textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xyE-00-Gd2">
                                                         <rect key="frame" x="6" y="12" width="402" height="21"/>
@@ -43,21 +43,21 @@
                                                 </subviews>
                                                 <color key="backgroundColor" cocoaTouchSystemColor="darkTextColor"/>
                                                 <accessibility key="accessibilityConfiguration" identifier="blockedView">
-                                                    <bool key="isElement" value="YES"/>
+                                                    <bool key="isElement" value="NO"/>
                                                 </accessibility>
                                                 <constraints>
-                                                    <constraint firstAttribute="height" constant="44" id="odg-J3-bEI"/>
+                                                    <constraint firstAttribute="height" constant="44" id="Yot-Oz-TTh"/>
                                                 </constraints>
                                             </view>
                                         </subviews>
                                         <color key="backgroundColor" red="0.84705882352941175" green="0.8784313725490196" blue="0.89411764705882346" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <gestureRecognizers/>
                                         <constraints>
-                                            <constraint firstItem="lXG-JX-cKj" firstAttribute="top" secondItem="AC0-gj-Tnr" secondAttribute="top" constant="581" id="5x6-rK-Qtn"/>
-                                            <constraint firstAttribute="trailing" secondItem="lXG-JX-cKj" secondAttribute="trailing" id="b1s-Lx-hxc"/>
-                                            <constraint firstAttribute="bottom" secondItem="lXG-JX-cKj" secondAttribute="bottom" id="dST-En-frI"/>
-                                            <constraint firstItem="lXG-JX-cKj" firstAttribute="leading" secondItem="AC0-gj-Tnr" secondAttribute="leading" id="tlR-Ul-6Qc"/>
-                                            <constraint firstItem="lXG-JX-cKj" firstAttribute="centerX" secondItem="AC0-gj-Tnr" secondAttribute="centerX" id="zrz-Qf-3Ic"/>
+                                            <constraint firstItem="lXG-JX-cKj" firstAttribute="centerX" secondItem="AC0-gj-Tnr" secondAttribute="centerX" id="6yg-XK-m4a"/>
+                                            <constraint firstAttribute="bottom" secondItem="lXG-JX-cKj" secondAttribute="bottom" constant="581" id="j44-yq-cU1"/>
+                                            <constraint firstAttribute="trailing" secondItem="lXG-JX-cKj" secondAttribute="trailing" id="qBr-5d-ebN"/>
+                                            <constraint firstItem="lXG-JX-cKj" firstAttribute="top" secondItem="AC0-gj-Tnr" secondAttribute="top" id="sOo-nD-iPd"/>
+                                            <constraint firstItem="lXG-JX-cKj" firstAttribute="leading" secondItem="AC0-gj-Tnr" secondAttribute="leading" id="tSf-DE-D7F"/>
                                         </constraints>
                                         <connections>
                                             <outletCollection property="gestureRecognizers" destination="vIM-rF-zWh" appends="YES" id="w56-f7-2qf"/>

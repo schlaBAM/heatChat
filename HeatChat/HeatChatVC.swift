@@ -47,8 +47,6 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
 
         ref = Database.database().reference()
 		
-		defaults.removeObject(forKey: "blockedUsers")
-
         loadUI()
         setupNotifications()
     }
@@ -266,9 +264,7 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
 			selectedUni = schools[index]
 			messages.removeAll()
 			messageViews.removeAll()
-			messageView.subviews.forEach({
-				if $0.accessibilityIdentifier != "blockedView" {$0.removeFromSuperview()}
-			})
+			messageView.subviews.forEach({$0.removeFromSuperview()})
 			messageView.contentSize = CGSize(width: view.bounds.width, height: 0)
 			
 			let path = ref.child("schoolMessages").child(selectedUni!.path).child("messages")
@@ -359,7 +355,7 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
 		}
 		
 		if let index = schools.index(where: {$0.name == selectedUni!.name}) {
-			let blockedNotification = UIView(frame: CGRect(x: 0, y: self.navigationController!.navigationBar.frame.height * 1.45, width: view.bounds.width, height: messageView.bounds.height*0.05))
+			let blockedNotification = UIView(frame: CGRect(x: 0, y: self.navigationController!.navigationBar.frame.height * 1.45, width: view.bounds.width, height: messageView.bounds.height*0.065))
 			blockedNotification.backgroundColor = UIColor.black
 			blockedNotification.alpha = 0.9
 
