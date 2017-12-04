@@ -184,6 +184,7 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
         
         let school = School(dict: data)
         schools.append(school!)
+		schools.sort { ( $0.name < $1.name) }
         sideBar.reloadData()
     }
     
