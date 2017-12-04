@@ -19,6 +19,7 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
     @IBOutlet weak var sendButton: UIButton!
     @IBOutlet weak var chatBox: UITextView!
     @IBOutlet weak var chatView: UIView!
+    @IBOutlet weak var blockedNotificationView: UIView!
     
     let appDel = UIApplication.shared.delegate as! AppDelegate
     let defaults = UserDefaults.standard
@@ -189,7 +190,6 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
             messageView.addSubview(textLabel)
             messageView.addSubview(timeLabel)
 			
-			
             messageViews.append(textLabel)
             
             yHeight += textLabel.bounds.height + 10
@@ -266,7 +266,10 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
 			selectedUni = schools[index]
 			messages.removeAll()
 			messageViews.removeAll()
-			messageView.subviews.forEach({$0.removeFromSuperview()})
+			messageView.subviews.forEach({
+				if $0.accessibilityIdentifier != "blockedView" {$0.removeFromSuperview()}
+			})
+			messageView.contentSize = CGSize(width: view.bounds.width, height: 0)
 			
 			let path = ref.child("schoolMessages").child(selectedUni!.path).child("messages")
 			
@@ -356,23 +359,30 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
 		}
 		
 		if let index = schools.index(where: {$0.name == selectedUni!.name}) {
-			let blockedNotification = UIView(frame: CGRect(x: messageView.bounds.width*0.05, y: messageView.bounds.height * 0.15, width: messageView.bounds.width * 0.9, height: messageView.bounds.height*0.075))
+			let blockedNotification = UIView(frame: CGRect(x: 0, y: self.navigationController!.navigationBar.frame.height * 1.45, width: view.bounds.width, height: messageView.bounds.height*0.05))
 			blockedNotification.backgroundColor = UIColor.black
 			blockedNotification.alpha = 0.9
-			blockedNotification.layer.cornerRadius = 5
-			
+
 			let blockedLabel = UILabel(frame: CGRect(x: 0, y: 0, width: blockedNotification.bounds.width, height: blockedNotification.bounds.height))
-			blockedLabel.text = "User has been blocked! You will no longer see their messages."
+			blockedLabel.text = "User blocked! You will no longer see their messages."
 			blockedLabel.textColor = UIColor.white
-			blockedLabel.font = UIFont.systemFont(ofSize: 15)
-//			blockedLabel.adjustsFontSizeToFitWidth = true
+			blockedLabel.font = UIFont.systemFont(ofSize: 14)
+			blockedLabel.adjustsFontSizeToFitWidth = true
 			blockedLabel.textAlignment = .center
 			blockedNotification.addSubview(blockedLabel)
 			view.addSubview(blockedNotification)
+
+//			blockedNotificationView.isHidden = false
 			
-			UIView.animate(withDuration: 0.5, delay: 3, options: UIViewAnimationOptions.curveEaseOut, animations: {
-				blockedNotification.alpha = 0.0
-			}, completion:nil)
+			UIView.animate(withDuration: 0.5, delay: 2.5, options: .curveLinear, animations: {
+//				self.blockedNotificationView.alpha = 0.0
+				blockedNotification.alpha = 0
+			}, completion: { (_) in
+//				self.blockedNotificationView.isHidden = true
+				blockedNotification.removeFromSuperview()
+			})
+			
+
 
 			setupChatListener(index, blockedUpdate: true)
 		}

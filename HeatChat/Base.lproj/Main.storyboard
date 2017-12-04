@@ -29,8 +29,36 @@
                                 <subviews>
                                     <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" alwaysBounceHorizontal="YES" showsHorizontalScrollIndicator="NO" indicatorStyle="black" translatesAutoresizingMaskIntoConstraints="NO" id="AC0-gj-Tnr">
                                         <rect key="frame" x="0.0" y="0.0" width="414" height="625"/>
+                                        <subviews>
+                                            <view hidden="YES" alpha="0.80000000000000004" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="lXG-JX-cKj">
+                                                <rect key="frame" x="0.0" y="581" width="414" height="44"/>
+                                                <subviews>
+                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="User blocked! You will no longer see their messages." textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xyE-00-Gd2">
+                                                        <rect key="frame" x="6" y="12" width="402" height="21"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                        <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                                        <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                        <nil key="highlightedColor"/>
+                                                    </label>
+                                                </subviews>
+                                                <color key="backgroundColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                <accessibility key="accessibilityConfiguration" identifier="blockedView">
+                                                    <bool key="isElement" value="YES"/>
+                                                </accessibility>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="44" id="odg-J3-bEI"/>
+                                                </constraints>
+                                            </view>
+                                        </subviews>
                                         <color key="backgroundColor" red="0.84705882352941175" green="0.8784313725490196" blue="0.89411764705882346" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <gestureRecognizers/>
+                                        <constraints>
+                                            <constraint firstItem="lXG-JX-cKj" firstAttribute="top" secondItem="AC0-gj-Tnr" secondAttribute="top" constant="581" id="5x6-rK-Qtn"/>
+                                            <constraint firstAttribute="trailing" secondItem="lXG-JX-cKj" secondAttribute="trailing" id="b1s-Lx-hxc"/>
+                                            <constraint firstAttribute="bottom" secondItem="lXG-JX-cKj" secondAttribute="bottom" id="dST-En-frI"/>
+                                            <constraint firstItem="lXG-JX-cKj" firstAttribute="leading" secondItem="AC0-gj-Tnr" secondAttribute="leading" id="tlR-Ul-6Qc"/>
+                                            <constraint firstItem="lXG-JX-cKj" firstAttribute="centerX" secondItem="AC0-gj-Tnr" secondAttribute="centerX" id="zrz-Qf-3Ic"/>
+                                        </constraints>
                                         <connections>
                                             <outletCollection property="gestureRecognizers" destination="vIM-rF-zWh" appends="YES" id="w56-f7-2qf"/>
                                         </connections>
@@ -115,6 +143,7 @@
                     </navigationItem>
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
                     <connections>
+                        <outlet property="blockedNotificationView" destination="lXG-JX-cKj" id="IXV-0O-2TW"/>
                         <outlet property="chatBox" destination="Ir7-ls-MNQ" id="nUx-hh-Mdp"/>
                         <outlet property="chatView" destination="RzS-7K-f09" id="eLp-sz-8bb"/>
                         <outlet property="messageView" destination="AC0-gj-Tnr" id="QHW-x7-lnl"/>
@@ -128,7 +157,7 @@
                     </connections>
                 </tapGestureRecognizer>
             </objects>
-            <point key="canvasLocation" x="370.39999999999998" y="32.512315270935964"/>
+            <point key="canvasLocation" x="369.56521739130437" y="31.793478260869566"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="bS2-Aw-9Vk">
