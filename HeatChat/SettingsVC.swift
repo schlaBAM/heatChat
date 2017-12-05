@@ -49,6 +49,8 @@ class SettingsVC : UIViewController, UITableViewDelegate, UITableViewDataSource 
         } else {
            defaults.set(false, forKey: "filterEnabled")
         }
+        
+        defaults.set(true, forKey: "filterChanged")
     }
     
 }

@@ -54,6 +54,14 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
     override func viewWillAppear(_ animated: Bool) {
 
         checkLocation()
+		
+		let filterChanged = defaults.bool(forKey: "filterChanged")
+		
+		if let selectedUni = selectedUni, filterChanged, let index = schools.index(where: {$0.name == selectedUni.name}) {
+			setupChatListener(index, update: true)
+		}
+		
+		defaults.set(false, forKey: "filterChanged")
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -69,18 +77,6 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardIsHiding(_:)), name: Notification.Name.UIKeyboardWillHide, object: nil)
     }
 	
-	@IBAction func unwindFromSettingsVC(_ sender : UIStoryboardSegue) {
-		if sender.source is SettingsVC {
-			if let filtered = defaults.bool(forKey: "filterEnabled") as? Bool, filtered {
-				if selectedUni != nil {
-					
-				} else {
-					
-				}
-			}
-			
-		}
-	}
 	//MARK: UI
     
     fileprivate func loadUI() {
@@ -268,9 +264,9 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
         return timeLabel
     }
 	
-	private func setupChatListener(_ index : Int, blockedUpdate : Bool = false){
+	private func setupChatListener(_ index : Int, update : Bool = false){
 		
-		if selectedUni == nil || selectedUni!.path != schools[index].path || blockedUpdate {
+		if selectedUni == nil || selectedUni!.path != schools[index].path || update {
 			if selectedUni != nil {
 				ref.child("schoolMessages").child(selectedUni!.path).child("messages").removeAllObservers()
 			}
@@ -310,7 +306,7 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
 				self.setupChatBar()
 			}
 		}
-		if !blockedUpdate {
+		if !update {
 			animateSideBar(sideBar)
 		}
 	}
@@ -393,7 +389,7 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
 			
 
 
-			setupChatListener(index, blockedUpdate: true)
+			setupChatListener(index, update: true)
 		}
 		
 	}
