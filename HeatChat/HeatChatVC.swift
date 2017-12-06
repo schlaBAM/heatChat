@@ -20,6 +20,7 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
     @IBOutlet weak var chatBox: UITextView!
     @IBOutlet weak var chatView: UIView!
     @IBOutlet weak var blockedNotificationView: UIView!
+    @IBOutlet weak var stackView: UIStackView!
     
     let appDel = UIApplication.shared.delegate as! AppDelegate
     let defaults = UserDefaults.standard
@@ -397,7 +398,9 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
 	//MARK: Messaging
     
     @objc private func keyboardIsShowing(_ notification : Notification) {
-        chatBox.text = ""
+		if chatBox.text == "Add a message.." {
+        	chatBox.text = ""
+		}
 		
 		view.bringSubview(toFront: chatBox)
 		view.bringSubview(toFront: sendButton)
@@ -415,10 +418,8 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
 			if messageViews.count > 0 {
 				messageView.scrollRectToVisible((messageViews.last?.frame)!, animated: true)
 			}
-			
-//            messageView.frame.origin.y -= keyboardRect.height
-            chatView.frame.origin.y -= keyboardRect.height
-
+			//			chatView.frame.origin.y -= keyboardRect.height
+			chatView.frame.origin.y = stackView.frame.height - keyboardRect.height - chatView.bounds.height
          }
     }
     
@@ -426,10 +427,9 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
         if let keyboardFrame: NSValue = notification.userInfo?[UIKeyboardFrameEndUserInfoKey] as? NSValue {
             
             let keyboardRect = keyboardFrame.cgRectValue
-//            messageView.frame.origin.y += keyboardRect.height
 			messageView.contentInset = UIEdgeInsets.zero
             chatView.frame.origin.y += keyboardRect.height
-            
+			
         }
         
         if chatBox.text == "" {
