@@ -49,28 +49,28 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
         ref = Database.database().reference()
 		
         loadUI()
-        setupNotifications()
     }
     
     override func viewWillAppear(_ animated: Bool) {
 
+		setupNotifications()
         checkLocation()
 		
 		let filterChanged = defaults.bool(forKey: "filterChanged")
 		
 		if let selectedUni = selectedUni, filterChanged, let index = schools.index(where: {$0.name == selectedUni.name}) {
 			setupChatListener(index, update: true)
+			defaults.set(false, forKey: "filterChanged")
 		}
 		
-		defaults.set(false, forKey: "filterChanged")
     }
     
     override func viewWillDisappear(_ animated: Bool) {
+		if chatBox.isFirstResponder {
+			chatBox.resignFirstResponder()
+		}
         NotificationCenter.default.removeObserver(self, name: Notification.Name.UIKeyboardWillShow, object: nil)
         NotificationCenter.default.removeObserver(self, name: Notification.Name.UIKeyboardWillHide, object: nil)
-        if chatBox.isFirstResponder {
-            chatBox.resignFirstResponder()
-        }
     }
     
     private func setupNotifications() {
