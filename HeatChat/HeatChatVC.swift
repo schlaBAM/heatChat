@@ -25,6 +25,8 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
     let appDel = UIApplication.shared.delegate as! AppDelegate
     let defaults = UserDefaults.standard
 	
+	var colors = [Color]()
+	var userColors = [String : Color]()
     var messages = [Message]()
     var messageViews = [UIView]()
     var sideBar = UITableView()
@@ -40,13 +42,15 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+		
+		
         userLocationManager.delegate = self
 
         navigationController?.navigationBar.barTintColor = UIColor(red: 0.3922, green: 0.5843, blue: 0.9294, alpha: 1.0) /* #6495ed */
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedStringKey.foregroundColor: UIColor.white]
 
         ref = Database.database().reference()
+//		addColors()
 		
         loadUI()
     }
@@ -72,7 +76,7 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
         NotificationCenter.default.removeObserver(self, name: Notification.Name.UIKeyboardWillShow, object: nil)
         NotificationCenter.default.removeObserver(self, name: Notification.Name.UIKeyboardWillHide, object: nil)
     }
-    
+	
     private func setupNotifications() {
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardIsShowing(_:)), name: Notification.Name.UIKeyboardWillShow, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardIsHiding(_:)), name: Notification.Name.UIKeyboardWillHide, object: nil)
@@ -81,9 +85,12 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
 	//MARK: UI
     
     fileprivate func loadUI() {
-      
-        getSchools()
-        
+		
+		DispatchQueue.main.async {
+			self.getSchools()
+			self.getColors()
+		}
+		
         let navHeight = self.navigationController!.navigationBar.frame.height
         yHeight = navHeight * 1.05
 		
@@ -112,7 +119,7 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
         messageView.contentSize = CGSize(width: view.bounds.width, height: 0)
         
         self.chatBox.delegate = self
-        
+		
     }
     
     @IBAction func universityIconTapped(_ sender: Any) {
@@ -167,6 +174,56 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
             animateSideBar(sideBar)
         }
     }
+	
+/*	private func addColors(){
+		let colors = [
+			["#FF9797","#000000"],
+			["#FF97E8","#000000"],
+			["#FF97CB","#000000"],
+			["#FE98F1","#000000"],
+			["#ED9EFE","#000000"],
+			["#E29BFD","#000000"],
+			["#B89AFE","#000000"],
+			["#F900F9","#FFFFFF"],
+			["#DD75DD","#FFFFFF"],
+			["#BD5CFE","#FFFFFF"],
+			["#AE70ED","#FFFFFF"],
+			["#9588EC","#FFFFFF"],
+			["#6094DB","#FFFFFF"],
+			["#44B4D5","#FFFFFF"],
+			["#99C7FF","#000000"],
+			["#A8E4FF","#000000"],
+			["#75ECFD","#000000"],
+			["#92FEF9","#000000"],
+			["#7DFDD7","#000000"],
+			["#8BFEA8","#000000"],
+			["#93EEAA","#000000"],
+			["#A6CAA9","#000000"],
+			["#AAFD8E","#000000"],
+			["#6FFF44","#000000"],
+			["#ABFF73","#000000"],
+			["#FFFF84","#000000"],
+			["#EEF093","#000000"]
+		]
+		
+		for pastel in colors {
+			let color = ["hexColor" : pastel[0], "textColor" : pastel[1]] as [String : String]
+			ref.child("colors").childByAutoId().setValue(color)
+		}
+
+	}
+*/
+	
+	private func getColors(){
+		ref.child("colors").observeSingleEvent(of: .value) { (data) in
+			for item in data.children {
+				let snap = item as! DataSnapshot
+				let color = snap.value as? [String : String]
+				let test = Color(data: color!)
+				self.colors.append(test!)
+			}
+		}
+	}
     
     private func getSchools() {
         Database.database().reference().child("schools").observeSingleEvent(of: .value, with: { (data) in
@@ -215,10 +272,22 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
         //message from other user
 		var textLabel = MessageView(frame: CGRect(x: view.bounds.width * 0.025, y: yHeight, width: view.bounds.width * 0.65, height: view.bounds.height * 0.125), textContainer: NSTextContainer?.none, tag: "hello", message: chatMessage)
        // var textLabel = MessageView(frame: CGRect(x: view.bounds.width * 0.025, y: yHeight, width: view.bounds.width * 0.65, height: view.bounds.height * 0.125))
-        textLabel.backgroundColor = .white
+		
+		if(colors.isEmpty) {
+			textLabel.backgroundColor = .white
+			textLabel.textColor = #colorLiteral(red: 0.3764705882, green: 0.462745098, blue: 0.9882352941, alpha: 1)
+		} else {
+			if let user = userColors[chatMessage.uid] {
+				textLabel.backgroundColor = user.hexStringToUIColor(hex: user.hex)
+				textLabel.textColor = user.hexStringToUIColor(hex: user.textColor)
+			} else {
+				let random = Int(arc4random_uniform(UInt32(colors.count)))
+				userColors[chatMessage.uid] = colors.remove(at: random)
+			}
+		}
+
         textLabel.text = chatMessage.text
         textLabel.font = UIFont.systemFont(ofSize: 14)
-        textLabel.textColor = #colorLiteral(red: 0.3764705882, green: 0.462745098, blue: 0.9882352941, alpha: 1)
         textLabel.sizeToFit()
         
         if defaults.string(forKey: "userID") == chatMessage.uid {
@@ -271,11 +340,15 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
 			if selectedUni != nil {
 				ref.child("schoolMessages").child(selectedUni!.path).child("messages").removeAllObservers()
 			}
+			
+			userColors.removeAll()
+			colors.removeAll()
+			getColors()
+			
 			selectedUni = schools[index]
 			messages.removeAll()
 			messageViews.removeAll()
 			messageView.subviews.forEach({$0.removeFromSuperview()})
-			messageView.contentSize = CGSize(width: view.bounds.width, height: 0)
 			
 			let path = ref.child("schoolMessages").child(selectedUni!.path).child("messages")
 			
