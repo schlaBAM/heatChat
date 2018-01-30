@@ -175,8 +175,41 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
         }
     }
 	
-/*	private func addColors(){
+	/*
+	private func addColors(){
 		let colors = [
+			["#BBBBFF","#000000"],
+			["#BBDAFF","#000000"],
+			["#CEF0FF","#000000"],
+			["#ACF3FD","#000000"],
+			["#B5FFFC","#000000"],
+			["#A5FEE3","#000000"],
+			["#B5FFC8","#000000"],
+			["#FFBBBB","#000000"],
+			["#FFACEC","#000000"],
+			["#FFBBDD","#000000"],
+			["#FFBBF7","#000000"],
+			["#F2BCFE","#000000"],
+			["#EDBEFE","#000000"],
+			["#D0BCFE","#000000"],
+			["#BBBBFF","#000000"],
+			["#BBDAFF","#000000"],
+			["#CEF0FF","#000000"],
+			["#ACF3FD","#000000"],
+			["#B5FFFC","#000000"],
+			["#A5FEE3","#000000"],
+			["#B5FFC8","#000000"],
+			["#5757FF","#FFFFFF"],
+			["#62A9FF","#FFFFFF"],
+			["#62D0FF",#000000"],
+			["#06DCFB","#000000"],
+			["#01FCEF","#000000"],
+			["#03EBA6","#000000"],
+			["#75B4FF","#FFFFFF"],
+			["#75D6FF","#000000"],
+			["#24E0FB","#000000"],
+			["#1FFEF3","#000000"],
+			["#03F3AB","#000000"],
 			["#FF9797","#000000"],
 			["#FF97E8","#000000"],
 			["#FF97CB","#000000"],
@@ -189,7 +222,6 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
 			["#BD5CFE","#FFFFFF"],
 			["#AE70ED","#FFFFFF"],
 			["#9588EC","#FFFFFF"],
-			["#6094DB","#FFFFFF"],
 			["#44B4D5","#FFFFFF"],
 			["#99C7FF","#000000"],
 			["#A8E4FF","#000000"],
@@ -201,10 +233,10 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
 			["#A6CAA9","#000000"],
 			["#AAFD8E","#000000"],
 			["#6FFF44","#000000"],
-			["#ABFF73","#000000"],
 			["#FFFF84","#000000"],
 			["#EEF093","#000000"]
 		]
+
 		
 		for pastel in colors {
 			let color = ["hexColor" : pastel[0], "textColor" : pastel[1]] as [String : String]
@@ -212,7 +244,9 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
 		}
 
 	}
+
 */
+
 	
 	private func getColors(){
 		ref.child("colors").observeSingleEvent(of: .value) { (data) in
@@ -278,11 +312,16 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
 			textLabel.textColor = #colorLiteral(red: 0.3764705882, green: 0.462745098, blue: 0.9882352941, alpha: 1)
 		} else {
 			if let user = userColors[chatMessage.uid] {
-				textLabel.backgroundColor = user.hexStringToUIColor(hex: user.hex)
-				textLabel.textColor = user.hexStringToUIColor(hex: user.textColor)
+				textLabel.backgroundColor = UIColor(hexString: user.hex)
+				textLabel.textColor = UIColor(hexString: user.textColor)
+//				textLabel.backgroundColor = user.hexStringToUIColor(hex: user.hex)
+//				textLabel.textColor = user.hexStringToUIColor(hex: user.textColor)
 			} else {
 				let random = Int(arc4random_uniform(UInt32(colors.count)))
-				userColors[chatMessage.uid] = colors.remove(at: random)
+				let color =  colors.remove(at: random)
+				userColors[chatMessage.uid] = color
+				textLabel.backgroundColor = UIColor(hexString: color.hex)
+				textLabel.textColor = UIColor(hexString: color.textColor)
 			}
 		}
 
@@ -520,15 +559,20 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
     }
 
     @IBAction private func sendTapped(_ sender: Any) {
-        let message = ["lat" : defaults.double(forKey: "userLat"), "lon" : defaults.double(forKey: "userLon"), "text" : chatBox.text, "time" : Int64(NSDate().timeIntervalSince1970 * 1000.0), "uid" : defaults.string(forKey: "userID")!] as [String : Any]
-        if let selectedUni = selectedUni {
-            //temporary until I fix placeholder issues.
-            if chatBox.text != "" && chatBox.text != "Add a message.." {
-                ref.child("schoolMessages").child(selectedUni.path).child("messages").childByAutoId().setValue(message)
-                chatBox.text.removeAll()
-                view.endEditing(true)
-            }
-        }
+		
+		let words = ["succ", "dicc", "licc"]
+		
+		if !(words.reduce(false) { $0 || chatBox.text.lowercased().contains($1) }) {
+			let message = ["lat" : defaults.double(forKey: "userLat"), "lon" : defaults.double(forKey: "userLon"), "text" : chatBox.text, "time" : Int64(NSDate().timeIntervalSince1970 * 1000.0), "uid" : defaults.string(forKey: "userID")!] as [String : Any]
+			if let selectedUni = selectedUni {
+				//temporary until I fix placeholder issues.
+				if chatBox.text != "" && chatBox.text != "Add a message.." {
+					ref.child("schoolMessages").child(selectedUni.path).child("messages").childByAutoId().setValue(message)
+				}
+			}
+		}
+		chatBox.text.removeAll()
+		view.endEditing(true)
     }
 	
 	func checkForMessages() {
@@ -594,5 +638,25 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
     func userDidUpdateLocationStatus() {
         setupChatBar()
     }
+}
+
+extension UIColor {
+	convenience init(hexString: String) {
+		let hex = hexString.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
+		var int = UInt32()
+		Scanner(string: hex).scanHexInt32(&int)
+		let a, r, g, b: UInt32
+		switch hex.count {
+		case 3: // RGB (12-bit)
+			(a, r, g, b) = (255, (int >> 8) * 17, (int >> 4 & 0xF) * 17, (int & 0xF) * 17)
+		case 6: // RGB (24-bit)
+			(a, r, g, b) = (255, int >> 16, int >> 8 & 0xFF, int & 0xFF)
+		case 8: // ARGB (32-bit)
+			(a, r, g, b) = (int >> 24, int >> 16 & 0xFF, int >> 8 & 0xFF, int & 0xFF)
+		default:
+			(a, r, g, b) = (255, 0, 0, 0)
+		}
+		self.init(red: CGFloat(r) / 255, green: CGFloat(g) / 255, blue: CGFloat(b) / 255, alpha: CGFloat(a) / 255)
+	}
 }
 
