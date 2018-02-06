@@ -21,6 +21,7 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
     @IBOutlet weak var chatView: UIView!
     @IBOutlet weak var blockedNotificationView: UIView!
     @IBOutlet weak var stackView: UIStackView!
+    @IBOutlet weak var viewerLabel: UILabel!
     
     let appDel = UIApplication.shared.delegate as! AppDelegate
     let defaults = UserDefaults.standard
@@ -31,6 +32,8 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
     var messageViews = [UIView]()
     var sideBar = UITableView()
     var selectedUni : School?
+    var numberViewers : Int?
+	var selfCounted = false
 	
 	private var noMessagesLabel : NoMessagesView?
 	private var titleLabel = UILabel()
@@ -200,8 +203,7 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
 			["#A5FEE3","#000000"],
 			["#B5FFC8","#000000"],
 			["#5757FF","#FFFFFF"],
-			["#62A9FF","#FFFFFF"],
-			["#62D0FF",#000000"],
+			["#62D0FF","#000000"],
 			["#06DCFB","#000000"],
 			["#01FCEF","#000000"],
 			["#03EBA6","#000000"],
@@ -232,7 +234,6 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
 			["#93EEAA","#000000"],
 			["#A6CAA9","#000000"],
 			["#AAFD8E","#000000"],
-			["#6FFF44","#000000"],
 			["#FFFF84","#000000"],
 			["#EEF093","#000000"]
 		]
@@ -377,9 +378,18 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
 		
 		if selectedUni == nil || selectedUni!.path != schools[index].path || update {
 			if selectedUni != nil {
-				ref.child("schoolMessages").child(selectedUni!.path).child("messages").removeAllObservers()
+                
+                if let viewers = numberViewers {
+                    ref.child("schoolMessages/\(selectedUni!.path)/counter").setValue(viewers - 1)
+                }
+				selfCounted = false
+				numberViewers = 0
+                ref.child("schoolMessages").child("\(selectedUni!.path)/counter").removeAllObservers()
+                ref.child("schoolMessages").child(selectedUni!.path).child("messages").removeAllObservers()
 			}
-			
+
+//            viewerLabel.isHidden = false
+
 			userColors.removeAll()
 			colors.removeAll()
 			getColors()
@@ -389,20 +399,39 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
 			messageViews.removeAll()
 			messageView.subviews.forEach({$0.removeFromSuperview()})
 			
-			let path = ref.child("schoolMessages").child(selectedUni!.path).child("messages")
+			let path = ref.child("schoolMessages").child(selectedUni!.path)
+
+			path.child("counter").observe(.value, with: { (snapshot) in
+				if let viewers = snapshot.value as? Int {
+					if !self.selfCounted {
+						self.selfCounted = true
+						print("yobish count is \(viewers)")
+						self.numberViewers = viewers + 1
+						self.ref.child("schoolMessages/\(self.selectedUni!.path)/counter").setValue(self.numberViewers!)
+					} else {
+						self.numberViewers = viewers
+						print("heyo count is \(viewers)")
+					}
+				} else {
+					//this should only hit if there's no counter already.
+					self.selfCounted = true
+					self.ref.child("schoolMessages/\(self.selectedUni!.path)/counter").setValue(1)
+				}
+			})
 			
-			path.observeSingleEvent(of: .value, with: { (snapshot) in
+			
+			path.child("messages").observeSingleEvent(of: .value, with: { (snapshot) in
 				if !snapshot.hasChildren() {
 					self.checkForMessages()
 				}
 			})
-			
-			path.queryOrdered(byChild: "time").queryLimited(toLast: 100).observe(DataEventType.childAdded) { (data) in
-				
+
+			path.child("messages").queryOrdered(byChild: "time").queryLimited(toLast: 100).observe(DataEventType.childAdded) { (data) in
+
 				if data.hasChildren() {
 					let key = data.key
 					guard let data = data.value as? [String : Any] else {return}
-					
+
 					if let noMessagesLabel = self.noMessagesLabel {
 						if noMessagesLabel.isDescendant(of: self.view) {
 							noMessagesLabel.removeFromSuperview()
