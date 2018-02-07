@@ -14,6 +14,7 @@ class FilterWordsCustomCell : UITableViewCell {
     @IBOutlet weak var cellText: UILabel!
     @IBOutlet weak var subText: UILabel!
     @IBOutlet weak var cellSwitch: UISwitch!
+    
 }
 
 class SettingsVC : UIViewController, UITableViewDelegate, UITableViewDataSource {
@@ -30,6 +31,9 @@ class SettingsVC : UIViewController, UITableViewDelegate, UITableViewDataSource 
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        
+        //TODO : add cell for defaults.removeObject(forKey: "blockedUsers")
+
         return 1
     }
     

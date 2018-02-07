@@ -12,6 +12,9 @@ import QuartzCore
 import CoreLocation
 import Crashlytics
 
+var selectedUni : School?
+var numberViewers : Int?
+
 @IBDesignable
 class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UITableViewDataSource, UserLocationManagerDelegate, UIActionSheetDelegate{
 
@@ -21,18 +24,19 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
     @IBOutlet weak var chatView: UIView!
     @IBOutlet weak var blockedNotificationView: UIView!
     @IBOutlet weak var stackView: UIStackView!
-    @IBOutlet weak var viewerLabel: UILabel!
-    
+	
     let appDel = UIApplication.shared.delegate as! AppDelegate
     let defaults = UserDefaults.standard
 	
+	var viewerLabel = UILabel()
+	var viewerBox = UIView()
 	var colors = [Color]()
 	var userColors = [String : Color]()
     var messages = [Message]()
     var messageViews = [UIView]()
     var sideBar = UITableView()
-    var selectedUni : School?
-    var numberViewers : Int?
+//    var selectedUni : School?
+//    var numberViewers : Int?
 	var selfCounted = false
 	
 	private var noMessagesLabel : NoMessagesView?
@@ -45,7 +49,6 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
 
     override func viewDidLoad() {
         super.viewDidLoad()
-		
 		
         userLocationManager.delegate = self
 
@@ -62,7 +65,7 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
 
 		setupNotifications()
         checkLocation()
-		
+				
 		let filterChanged = defaults.bool(forKey: "filterChanged")
 		
 		if let selectedUni = selectedUni, filterChanged, let index = schools.index(where: {$0.name == selectedUni.name}) {
@@ -120,6 +123,24 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
         
         messageView.delegate = self
         messageView.contentSize = CGSize(width: view.bounds.width, height: 0)
+		
+		viewerBox.frame = CGRect(x: 0, y: self.navigationController!.navigationBar.frame.height * 1.45, width: view.bounds.width, height: 30)
+		viewerBox.backgroundColor = #colorLiteral(red: 0.8153982162, green: 0.8534983993, blue: 0.8850293159, alpha: 1)
+		viewerBox.isHidden = true
+		viewerBox.clipsToBounds = false
+		viewerBox.layer.shadowColor = UIColor.gray.cgColor
+		viewerBox.layer.shadowOffset = CGSize(width: 1, height: 1)
+		viewerBox.layer.shadowOpacity = 1.0
+		view.addSubview(viewerBox)
+		
+		viewerLabel.frame = CGRect(x: 0, y: 0, width: viewerBox.frame.width, height: viewerBox.frame.height)
+		viewerLabel.isHidden = true
+		viewerLabel.font = UIFont.systemFont(ofSize: 16, weight: .regular)
+		viewerLabel.textAlignment = .center
+		viewerLabel.backgroundColor = .clear
+		
+		viewerLabel.text = "0 Active Viewers"
+		viewerBox.addSubview(viewerLabel)
         
         self.chatBox.delegate = self
 		
@@ -315,8 +336,6 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
 			if let user = userColors[chatMessage.uid] {
 				textLabel.backgroundColor = UIColor(hexString: user.hex)
 				textLabel.textColor = UIColor(hexString: user.textColor)
-//				textLabel.backgroundColor = user.hexStringToUIColor(hex: user.hex)
-//				textLabel.textColor = user.hexStringToUIColor(hex: user.textColor)
 			} else {
 				let random = Int(arc4random_uniform(UInt32(colors.count)))
 				let color =  colors.remove(at: random)
@@ -390,8 +409,6 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
 				numberViewers = 0
 			}
 
-//            viewerLabel.isHidden = false
-
 			userColors.removeAll()
 			colors.removeAll()
 			getColors()
@@ -407,20 +424,18 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
 				if let viewers = snapshot.value as? Int {
 					if !self.selfCounted {
 						self.selfCounted = true
-						print("yobish count is \(viewers)")
-						self.numberViewers = viewers + 1
-						self.ref.child("schoolMessages/\(self.selectedUni!.path)/counter").setValue(self.numberViewers!)
+						numberViewers = viewers + 1
+						self.ref.child("schoolMessages/\(selectedUni!.path)/counter").setValue(numberViewers!)
 					} else {
-						self.numberViewers = viewers
-						print("heyo count is \(viewers)")
+						numberViewers = viewers
+						self.viewerLabel.text = "\(viewers) \(viewers != 1 ? "Users" : "User") Chatting"
 					}
 				} else {
 					//this should only hit if there's no counter already.
 					self.selfCounted = true
-					self.ref.child("schoolMessages/\(self.selectedUni!.path)/counter").setValue(1)
+					self.ref.child("schoolMessages/\(selectedUni!.path)/counter").setValue(1)
 				}
 			})
-			
 			
 			path.child("messages").observeSingleEvent(of: .value, with: { (snapshot) in
 				if !snapshot.hasChildren() {
@@ -446,10 +461,11 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
 			DispatchQueue.main.async {
 //				self.titleLabel.text = "\(self.selectedUni!.name) Heatchat"
 //				self.navigationItem.titleView = self.titleLabel
-				self.navigationItem.title = "\(self.selectedUni!.name) Heatchat"
+				self.navigationItem.title = "\(selectedUni!.name) Heatchat"
 				self.setupChatBar()
 			}
 		}
+		
 		if !update {
 			animateSideBar(sideBar)
 		}
@@ -508,7 +524,7 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
 		}
 		
 		if let index = schools.index(where: {$0.name == selectedUni!.name}) {
-			let blockedNotification = UIView(frame: CGRect(x: 0, y: self.navigationController!.navigationBar.frame.height * 1.45, width: view.bounds.width, height: messageView.bounds.height*0.065))
+			let blockedNotification = UIView(frame: CGRect(x: 0, y: self.navigationController!.navigationBar.frame.height * 1.45 + viewerBox.bounds.height, width: view.bounds.width, height: messageView.bounds.height*0.065))
 			blockedNotification.backgroundColor = UIColor.black
 			blockedNotification.alpha = 0.9
 
@@ -520,18 +536,12 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
 			blockedLabel.textAlignment = .center
 			blockedNotification.addSubview(blockedLabel)
 			view.addSubview(blockedNotification)
-
-//			blockedNotificationView.isHidden = false
 			
 			UIView.animate(withDuration: 0.5, delay: 2.5, options: .curveLinear, animations: {
-//				self.blockedNotificationView.alpha = 0.0
 				blockedNotification.alpha = 0
 			}, completion: { (_) in
-//				self.blockedNotificationView.isHidden = true
 				blockedNotification.removeFromSuperview()
 			})
-			
-
 
 			setupChatListener(index, update: true)
 		}
@@ -635,8 +645,13 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
         return "Select School"
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        //clear messageView, load messages, dismiss sidebar
+        //clear messageView, load messages, dismiss sidebar, add viewerLabel
         tableView.deselectRow(at: indexPath, animated: true)
+		
+		if viewerBox.isHidden {
+			viewerBox.isHidden = false
+			viewerLabel.isHidden = false
+		}
 		
 		setupChatListener(indexPath.row)
 

@@ -30,11 +30,11 @@
                                     <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" alwaysBounceHorizontal="YES" showsHorizontalScrollIndicator="NO" indicatorStyle="black" translatesAutoresizingMaskIntoConstraints="NO" id="AC0-gj-Tnr">
                                         <rect key="frame" x="0.0" y="0.0" width="414" height="625"/>
                                         <subviews>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="99000 Viewers" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dv7-EZ-tSv">
+                                            <label hidden="YES" opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0 Active Viewers" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dv7-EZ-tSv">
                                                 <rect key="frame" x="0.0" y="0.0" width="414" height="20.333333333333332"/>
                                                 <color key="backgroundColor" red="0.81539821624755859" green="0.85349839925765991" blue="0.88502931594848633" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 <color key="tintColor" red="0.26485078346983826" green="0.13067210453306044" blue="0.92941176469999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="17"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                 <nil key="textColor"/>
                                                 <nil key="highlightedColor"/>
                                                 <size key="shadowOffset" width="1" height="1"/>
@@ -171,7 +171,6 @@
                         <outlet property="messageView" destination="AC0-gj-Tnr" id="QHW-x7-lnl"/>
                         <outlet property="sendButton" destination="2f1-Z2-z5T" id="hrW-cO-bsj"/>
                         <outlet property="stackView" destination="PXQ-CK-RIK" id="kCT-Xv-cVP"/>
-                        <outlet property="viewerLabel" destination="dv7-EZ-tSv" id="h0p-CN-Ybv"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
