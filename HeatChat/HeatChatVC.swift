@@ -110,7 +110,7 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
 //		titleLabel.sizeToFit()
 		navigationItem.title = "Heatchat"
 		
-        sideBar = UITableView(frame: CGRect(x: 0 - view.bounds.width * 0.5, y: self.navigationController!.navigationBar.frame.height * 1.45, width: view.bounds.width * 0.5, height: view.bounds.height - navHeight * 1.5 ))
+        sideBar = UITableView(frame: CGRect(x: 0 - view.bounds.width * 0.5, y: self.navigationController!.navigationBar.frame.maxY, width: view.bounds.width * 0.5, height: view.bounds.height - navHeight * 1.5 ))
         sideBar.delegate = self
         sideBar.dataSource = self
         sideBar.layer.borderWidth = 2
@@ -124,7 +124,7 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
         messageView.delegate = self
         messageView.contentSize = CGSize(width: view.bounds.width, height: 0)
 		
-		viewerBox.frame = CGRect(x: 0, y: self.navigationController!.navigationBar.frame.height * 1.45, width: view.bounds.width, height: 30)
+		viewerBox.frame = CGRect(x: 0, y: self.navigationController!.navigationBar.frame.maxY, width: view.bounds.width, height: 25)
 		viewerBox.backgroundColor = #colorLiteral(red: 0.8153982162, green: 0.8534983993, blue: 0.8850293159, alpha: 1)
 		viewerBox.isHidden = true
 		viewerBox.clipsToBounds = false
@@ -135,7 +135,7 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
 		
 		viewerLabel.frame = CGRect(x: 0, y: 0, width: viewerBox.frame.width, height: viewerBox.frame.height)
 		viewerLabel.isHidden = true
-		viewerLabel.font = UIFont.systemFont(ofSize: 16, weight: .regular)
+		viewerLabel.font = UIFont.systemFont(ofSize: 14, weight: .regular)
 		viewerLabel.textAlignment = .center
 		viewerLabel.backgroundColor = .clear
 		
