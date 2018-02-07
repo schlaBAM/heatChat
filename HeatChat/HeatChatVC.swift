@@ -378,14 +378,16 @@ class HeatChatVC: UIViewController, UITextViewDelegate, UITableViewDelegate, UIT
 		
 		if selectedUni == nil || selectedUni!.path != schools[index].path || update {
 			if selectedUni != nil {
-                
-                if let viewers = numberViewers {
+				
+				ref.child("schoolMessages").child(selectedUni!.path).child("counter").removeAllObservers()
+				ref.child("schoolMessages").child(selectedUni!.path).child("messages").removeAllObservers()
+				
+				if let viewers = numberViewers {
                     ref.child("schoolMessages/\(selectedUni!.path)/counter").setValue(viewers - 1)
                 }
+				
 				selfCounted = false
 				numberViewers = 0
-                ref.child("schoolMessages").child("\(selectedUni!.path)/counter").removeAllObservers()
-                ref.child("schoolMessages").child(selectedUni!.path).child("messages").removeAllObservers()
 			}
 
 //            viewerLabel.isHidden = false
